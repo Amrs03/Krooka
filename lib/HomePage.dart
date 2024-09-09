@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'globalVariables.dart';
+import 'reportAccidents.dart';
 
 void main() {
   runApp(homePage());
@@ -20,19 +21,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text('Home Page'),
-    Text('Report Accident'),
-    Text('Profile Page'),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +30,16 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            Container(height: 120.0),
             ListTile(
               leading: Icon(Icons.car_crash),
               title: Text("Report Accident"),
-              //onTap: , add the logic here
+              onTap: () {
+                // Navigate to another page when the ListTile is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => reportAccidents()),
+                );
+              }
             ),
             ListTile(
               leading: Icon(Icons.car_rental),

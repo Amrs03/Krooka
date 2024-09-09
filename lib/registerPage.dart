@@ -10,7 +10,6 @@ class registerPage extends StatefulWidget {
 }
 
 class _registerPageState extends State<registerPage> {
-
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _fNameControler = TextEditingController();
@@ -19,9 +18,38 @@ class _registerPageState extends State<registerPage> {
   final TextEditingController _pNumberControler = TextEditingController();
   final TextEditingController _passWordControler = TextEditingController();
   final TextEditingController _confirmPassWordControler = TextEditingController();
+  final TextEditingController _dateControler = TextEditingController();
 
+  DateTime? _selectedDate; // DateTime variable to store the selected date
 
   @override
+  void dispose() {
+    _dateControler.dispose();
+    _fNameControler.dispose();
+    _lNameControler.dispose();
+    _idControler.dispose();
+    _pNumberControler.dispose();
+    _passWordControler.dispose();
+    _confirmPassWordControler.dispose();
+    super.dispose();
+  }
+
+  _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Current date as the initial date
+      firstDate: DateTime(2000),   // Earliest date the user can pick
+      lastDate: DateTime(2100),    // Latest date the user can pick
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;  // Store the selected date in the DateTime variable
+        _dateControler.text = "${pickedDate.toLocal()}".split(' ')[0]; // Update the TextFormField
+      });
+    }
+  }
+
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -37,9 +65,9 @@ class _registerPageState extends State<registerPage> {
                 TextFormField(
                   controller: _fNameControler,
                   decoration: InputDecoration(labelText: 'First Name'),
-                  validator: (value){
-                    if(value == null || value.isEmpty){
-                      return 'Please Enter Your Name';
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please Enter Your First Name';
                     }
                     return null;
                   },
@@ -47,9 +75,9 @@ class _registerPageState extends State<registerPage> {
                 TextFormField(
                   controller: _lNameControler,
                   decoration: InputDecoration(labelText: 'Last Name'),
-                  validator: (value){
-                    if(value == null || value.isEmpty){
-                      return 'Please Enter Your Name';
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please Enter Your Last Name';
                     }
                     return null;
                   },
@@ -81,6 +109,23 @@ class _registerPageState extends State<registerPage> {
                   },
                 ),
                 TextFormField(
+                  controller: _dateControler,
+                  decoration: InputDecoration(
+                    labelText: "Select Date",
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  readOnly: true,  // User cannot manually enter a date
+                  onTap: () {
+                    _selectDate(context);  // Open date picker on tap
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a date';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
                   controller: _passWordControler,
                   decoration: InputDecoration(labelText: 'Password'),
                   obscureText: true,
@@ -89,12 +134,11 @@ class _registerPageState extends State<registerPage> {
                       return 'Please enter your password';
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters long'; //add password validations
+                      return 'Password must be at least 6 characters long';
                     }
                     return null;
                   },
                 ),
-                // Confirm Password Input
                 TextFormField(
                   controller: _confirmPassWordControler,
                   decoration: InputDecoration(labelText: 'Confirm Password'),
@@ -122,11 +166,11 @@ class _registerPageState extends State<registerPage> {
                             _lNameControler.text,
                             int.parse(_idControler.text),
                             int.parse(_pNumberControler.text),
+                            _selectedDate!, // Pass the selected date here
                             _passWordControler.text,
                           );
 
                           // Handle the created User object (e.g., save it or print the details)
-
                           print('User Created: ${newUser.FirstName} ${newUser.LastName}');
 
                           registeredUsers.add(newUser);
@@ -149,7 +193,7 @@ class _registerPageState extends State<registerPage> {
               ],
             ),
           ),
-        )
+        ),
       ),
     );
   }

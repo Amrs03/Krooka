@@ -61,10 +61,10 @@ class _SignInPageState extends State<SignInPage> {
                   if (_formKey.currentState!.validate()) {
                     bool foundUser = false;
                     for (var user in registeredUsers) {
-                      if (user.id.toString() == _idController.text && user.passWord == _passwordController.text) {
+                      if (user.IdNumber.toString() == _idController.text && user.passWord == _passwordController.text) {
                         foundUser = true;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Sign in successful! Welcome, ${user.fName}.')),
+                          SnackBar(content: Text('Sign in successful! Welcome, ${user.FirstName}.')),
                         );
                         // Navigate to another page or perform other actions here
                         break;
