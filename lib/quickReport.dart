@@ -1,8 +1,5 @@
-
-//this page to be implemented late with back end dev
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 class SelectLocationPage extends StatefulWidget {
@@ -39,8 +36,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
 
     // Get current position
@@ -54,6 +50,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+    // Optionally, you can set the initial position here
   }
 
   void _onTap(LatLng position) {
@@ -77,7 +74,6 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
               icon: Icon(Icons.check),
               onPressed: () {
                 final locationLink = _getGoogleMapsLink(_selectedLocation!);
-                // Do something with the location link (e.g., return to previous page)
                 Navigator.pop(context, locationLink);
               },
             ),
@@ -103,7 +99,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
           ? FloatingActionButton.extended(
         onPressed: () {
           final locationLink = _getGoogleMapsLink(_selectedLocation!);
-          Navigator.pop(context, locationLink); // Return the link
+          Navigator.pop(context, locationLink);
         },
         label: Text('Get Location Link'),
         icon: Icon(Icons.location_on),
