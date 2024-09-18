@@ -1,110 +1,110 @@
-import 'package:flutter/material.dart';
-import 'google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:flutter/material.dart';
+// import 'google_maps_flutter.dart';
+// import 'package:geolocator/geolocator.dart';
 
-class SelectLocationPage extends StatefulWidget {
-  @override
-  _SelectLocationPageState createState() => _SelectLocationPageState();
-}
+// class SelectLocationPage extends StatefulWidget {
+//   @override
+//   _SelectLocationPageState createState() => _SelectLocationPageState();
+// }
 
-class _SelectLocationPageState extends State<SelectLocationPage> {
-  LatLng? _selectedLocation;
-  late GoogleMapController _mapController;
+// class _SelectLocationPageState extends State<SelectLocationPage> {
+//   LatLng? _selectedLocation;
+//   late GoogleMapController _mapController;
 
-  @override
-  void initState() {
-    super.initState();
-    _determinePosition();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _determinePosition();
+//   }
 
-  Future<void> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+//   Future<void> _determinePosition() async {
+//     bool serviceEnabled;
+//     LocationPermission permission;
 
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
+//     // Check if location services are enabled
+//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+//     if (!serviceEnabled) {
+//       return Future.error('Location services are disabled.');
+//     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied.');
-      }
-    }
+//     permission = await Geolocator.checkPermission();
+//     if (permission == LocationPermission.denied) {
+//       permission = await Geolocator.requestPermission();
+//       if (permission == LocationPermission.denied) {
+//         return Future.error('Location permissions are denied.');
+//       }
+//     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-    }
+//     if (permission == LocationPermission.deniedForever) {
+//       return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+//     }
 
-    // Get current position
-    Position position = await Geolocator.getCurrentPosition();
+//     // Get current position
+//     Position position = await Geolocator.getCurrentPosition();
 
-    setState(() {
-      _mapController.animateCamera(CameraUpdate.newLatLng(
-          LatLng(position.latitude, position.longitude)));
-    });
-  }
+//     setState(() {
+//       _mapController.animateCamera(CameraUpdate.newLatLng(
+//           LatLng(position.latitude, position.longitude)));
+//     });
+//   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
-    // Optionally, you can set the initial position here
-  }
+//   void _onMapCreated(GoogleMapController controller) {
+//     _mapController = controller;
+//     // Optionally, you can set the initial position here
+//   }
 
-  void _onTap(LatLng position) {
-    setState(() {
-      _selectedLocation = position;
-    });
-  }
+//   void _onTap(LatLng position) {
+//     setState(() {
+//       _selectedLocation = position;
+//     });
+//   }
 
-  String _getGoogleMapsLink(LatLng location) {
-    return 'https://www.google.com/maps?q=${location.latitude},${location.longitude}';
-  }
+//   String _getGoogleMapsLink(LatLng location) {
+//     return 'https://www.google.com/maps?q=${location.latitude},${location.longitude}';
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Select Location'),
-        actions: [
-          if (_selectedLocation != null)
-            IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {
-                final locationLink = _getGoogleMapsLink(_selectedLocation!);
-                Navigator.pop(context, locationLink);
-              },
-            ),
-        ],
-      ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(31.963158, 35.930359), // Default to Amman, Jordan
-          zoom: 14,
-        ),
-        onTap: _onTap,
-        markers: _selectedLocation != null
-            ? {
-          Marker(
-            markerId: MarkerId('selected-location'),
-            position: _selectedLocation!,
-          ),
-        }
-            : {},
-      ),
-      floatingActionButton: _selectedLocation != null
-          ? FloatingActionButton.extended(
-        onPressed: () {
-          final locationLink = _getGoogleMapsLink(_selectedLocation!);
-          Navigator.pop(context, locationLink);
-        },
-        label: Text('Get Location Link'),
-        icon: Icon(Icons.location_on),
-      )
-          : null,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Select Location'),
+//         actions: [
+//           if (_selectedLocation != null)
+//             IconButton(
+//               icon: Icon(Icons.check),
+//               onPressed: () {
+//                 final locationLink = _getGoogleMapsLink(_selectedLocation!);
+//                 Navigator.pop(context, locationLink);
+//               },
+//             ),
+//         ],
+//       ),
+//       body: GoogleMap(
+//         onMapCreated: _onMapCreated,
+//         initialCameraPosition: CameraPosition(
+//           target: LatLng(31.963158, 35.930359), // Default to Amman, Jordan
+//           zoom: 14,
+//         ),
+//         onTap: _onTap,
+//         markers: _selectedLocation != null
+//             ? {
+//           Marker(
+//             markerId: MarkerId('selected-location'),
+//             position: _selectedLocation!,
+//           ),
+//         }
+//             : {},
+//       ),
+//       floatingActionButton: _selectedLocation != null
+//           ? FloatingActionButton.extended(
+//         onPressed: () {
+//           final locationLink = _getGoogleMapsLink(_selectedLocation!);
+//           Navigator.pop(context, locationLink);
+//         },
+//         label: Text('Get Location Link'),
+//         icon: Icon(Icons.location_on),
+//       )
+//           : null,
+//     );
+//   }
+// }

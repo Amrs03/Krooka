@@ -111,7 +111,7 @@ class _registerPageState extends State<registerPage> {
                 TextFormField(
                   controller: _dateControler,
                   decoration: InputDecoration(
-                    labelText: "Select Date",
+                    labelText: "Date of birth",
                     suffixIcon: Icon(Icons.calendar_today),
                   ),
                   readOnly: true,  // User cannot manually enter a date

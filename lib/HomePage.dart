@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'globalVariables.dart';
 import 'reportAccidents.dart';
-
-void main() {
-  runApp(homePage());
-}
-
+import 'registerPage.dart';
 class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(),
+    return SafeArea(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyHomePage(),
+      ),
     );
   }
 }
@@ -44,15 +43,36 @@ class _MyHomePageState extends State<MyHomePage> {
             ListTile(
               leading: Icon(Icons.car_rental),
               title: Text("My Vehicles"),
+              onTap: () {
+                print('My Vehicles');
+              },
               //onTap: , add the logic here
             ),
             ListTile(
               leading: Icon(Icons.recent_actors),
               title: Text("Past Accidents"),
               //onTap: , add the logic here
-            )
+            ),
+            ListTile(
+              leading: Icon(Icons.recent_actors),
+              title: Text("Past Accidents"),
+              //onTap: , add the logic here
+            ),
+            Expanded(child: Container()),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text("Register"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => registerPage()),
+                );
+              },
+              //onTap: , add the logic here
+            ),
+
           ],
-        )
+        ),
       ),
 
     );
