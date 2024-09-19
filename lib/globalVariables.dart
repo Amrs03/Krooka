@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -59,6 +59,20 @@ class User {
 
   User(this.FirstName, this.LastName, this.IdNumber, this.PhoneNum, this.DoB, this.passWord); //Constructor...We will get the values from the DB
 
+  Map<String, dynamic> toJson() {
+    return {
+      'FirstName': FirstName,
+      'LastName': LastName,
+      'IdNumber' : IdNumber,
+      'Phone number' : PhoneNum,
+      'Date of birth' : DoB.toIso8601String(),
+      'Password' : passWord
+    };
+  }
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
 }
 
 class Accident {
@@ -102,6 +116,4 @@ class TowTrucks {
 }
 
 //This list is to be implemented in the database
-List <User> registeredUsers = [
-  User('Admin', 'Admin', 0000000000, 1111111111, '1/1/2003' as DateTime , 'Admin123'),
-];
+List <User> registeredUsers = [];
