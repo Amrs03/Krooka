@@ -14,6 +14,7 @@ class _SignInPageState extends State<SignInPage> {
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -57,23 +58,16 @@ class _SignInPageState extends State<SignInPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   if (_formKey.currentState!.validate()) {
-                    bool foundUser = false;
-                    for (var user in registeredUsers) {
-                      if (user.IdNumber.toString() == _idController.text && user.passWord == _passwordController.text) {
-                        foundUser = true;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Sign in successful! Welcome, ${user.FirstName}.')),
-                        );
-                        // Navigate to another page or perform other actions here
-                        break;
-                      }
+                    try {
+                      await _auth.signIn(int.parse(_idController.text), _passwordController.text);
+                      print ('User signed in successfully');
                     }
-
-                    if (!foundUser) {
+                    catch(e) {
+                      print('Failed to sign in: ${e.toString()}');
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Sign in failed. Please check your credentials.')),
+                        SnackBar(content: Text('Failed to sign in, please try again')),
                       );
                     }
                   }

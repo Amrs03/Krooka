@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:supabase_flutter/supabase_flutter.dart';
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-class User {
+class AppUser {
 
   late String FirstName;
   late String LastName;
@@ -57,7 +58,7 @@ class User {
   late DateTime DoB;
   late String passWord;
 
-  User(this.FirstName, this.LastName, this.IdNumber, this.PhoneNum, this.DoB, this.passWord); //Constructor...We will get the values from the DB
+  AppUser(this.FirstName, this.LastName, this.IdNumber, this.PhoneNum, this.DoB, this.passWord); //Constructor...We will get the values from the DB
 
   Map<String, dynamic> toJson() {
     return {
@@ -113,6 +114,40 @@ class TowTrucks {
   late int TruckID;
   late String Name;
   late int PhoneNumber;
+}
+
+class AuthService {
+  final supabase = Supabase.instance.client;
+
+  Future<AuthResponse> signUp (email, password)async{
+    try {
+      final authResponse = await supabase.auth.signUp(
+        password: password,
+        email: email
+      );
+      return authResponse;
+    }
+    catch(e) {
+      rethrow;
+    }
+  }
+  Future<void> signIn (ID, password) async {
+    try{
+      final profileResponse = await supabase.from('User').select().eq('IdNumber', ID);
+      if (profileResponse.isEmpty) {
+        throw Exception('User with this ID number does not exist');
+      }
+      final email = '$ID@example.com';
+      await supabase.auth.signInWithPassword(
+        password: password,
+        email: email
+      );
+    }
+    catch(e) {
+      rethrow;
+    }
+
+  }
 }
 
 //This list is to be implemented in the database

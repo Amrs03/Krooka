@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'globalVariables.dart';
 import 'signInPage.dart';
-import 'dart:convert';
 class registerPage extends StatefulWidget {
   const registerPage({super.key});
 
@@ -19,7 +19,7 @@ class _registerPageState extends State<registerPage> {
   final TextEditingController _passWordControler = TextEditingController();
   final TextEditingController _confirmPassWordControler = TextEditingController();
   final TextEditingController _dateControler = TextEditingController();
-
+  final AuthService _auth = AuthService();
   DateTime? _selectedDate; // DateTime variable to store the selected date
 
   @override
@@ -154,34 +154,39 @@ class _registerPageState extends State<registerPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Processing Registration')),
                     );
                     try {
-                      User newUser = User(
+                      AppUser newUser = AppUser(
                         _fNameControler.text,
                         _lNameControler.text,
                         int.parse(_idControler.text),
                         int.parse(_pNumberControler.text),
-                        _selectedDate!, // Pass the selected date here
+                        _selectedDate!,
                         _passWordControler.text,
                       );
-                      // Handle the created User object (e.g., save it or print the details)
-                      print('User Created: ${newUser.FirstName} ${newUser.LastName}');
-                      registeredUsers.add(newUser);
-                      registeredUsers.forEach ((user) {
-                        print(user);
+                      AuthResponse result = await _auth.signUp('${int.parse(_idControler.text)}@example.com', _passWordControler.text);    
+                      await _auth.supabase.from('User').insert({
+                        'IdNumber' : int.parse(_idControler.text),
+                        'Password' : _passWordControler.text,
+                        'PhoneNum' : int.parse(_pNumberControler.text),
+                        'FirstName' : _fNameControler.text,
+                        'LastName' : _lNameControler.text,
+                        'DoB': _selectedDate!.toIso8601String().split('T')[0],
+                        'AuthID' : result.user!.id
                       });
+                      print (result.user);  
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SignInPage()),
                       );
                     } catch (e) {
-                      print('Error: ${e.toString()}');
+                      print('Failed to register: ${e.toString()}');
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Please enter the ID and Phone Number in a valid format.')),
+                        SnackBar(content: Text('Failed to register, please try again')),
                       );
                     }
                   }
