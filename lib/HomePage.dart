@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'myVehicles.dart';
 import 'globalVariables.dart';
 import 'reportAccidents.dart';
 import 'registerPage.dart';
@@ -35,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //homepage
     MyHomePage(),
     //profile
-    reportAccidents(),
+    MyVehicles(),
     //setings
     SignInPage(),
     //toDoPage()
