@@ -1,4 +1,8 @@
+// ignore_for_file: sort_child_properties_last
+
 import 'package:flutter/material.dart';
+import 'AddCar.dart';
+
 
 class MyVehicles extends StatefulWidget {
   const MyVehicles({super.key});
@@ -14,7 +18,7 @@ class _MyWidgetState extends State<MyVehicles> {
   
   @override
   Widget build(BuildContext context) {
-    final ScreenWidth = MediaQuery.of(context).size.width;
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
       appBar: AppBar(
@@ -60,16 +64,15 @@ class _MyWidgetState extends State<MyVehicles> {
             ),
             
           ),
-
           Container(
             margin: EdgeInsets.only(left: 30, top: 15),
             child: Text("My Cars ", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold),),
           ),
 
-     
+          
           Container(
             margin: EdgeInsets.all(10),
-            height: ScreenHeight *0.6,
+            height: ScreenHeight *0.55,
             child: Expanded(
               child:ListView.builder(
                 itemCount: MyitemCount+1,
@@ -77,7 +80,10 @@ class _MyWidgetState extends State<MyVehicles> {
                 itemBuilder: (context, index) => Container(
                   child: MyitemCount == index ? GestureDetector(
                     onTap: (){
-                      print("Adding a car");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddCar()),
+                      );
                     },
                     child: Container(
                        width:MediaQuery.sizeOf(context).width*0.8,
@@ -183,7 +189,8 @@ class _MyWidgetState extends State<MyVehicles> {
 
                             ],
                           ),
-                           width:MediaQuery.sizeOf(context).width*0.8,
+                          width:ScreenWidth*0.8,
+                          height: ScreenHeight * 0.5,
                           margin: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                           color: Colors.grey[400],
