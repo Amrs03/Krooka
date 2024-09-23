@@ -1,11 +1,13 @@
 // ignore_for_file: sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:krooka/globalVariables.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'AddCar.dart';
 
 
 class MyVehicles extends StatefulWidget {
-  const MyVehicles({super.key});
+  const MyVehicles({super.key,});
 
 
   @override
@@ -13,8 +15,32 @@ class MyVehicles extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyVehicles> {
-  int MyitemCount = 4;
   
+  int MyitemCount = 4;
+  final supabase = Supabase.instance.client;
+  String? FirstName;
+  String? LastName;
+  DateTime? DoB;
+  String? PhoneNumber;
+
+  @override
+  void initState(){
+    super.initState();
+    _getUserInfo();
+  }
+  
+  Future<void> _getUserInfo() async {
+    dynamic response =null;
+    if (userID != ""){
+     response = await supabase.from('User').select().eq('IdNumber', userID).single();
+    }
+    setState(() {
+      FirstName = response["FirstName"] as String?;
+      LastName = response["LastName"] as String?;
+      //DoB = response['DoB'] as DateTime?;
+      //PhoneNumber = response['PhoneNum'] as String?;
+    });
+    }
   
   @override
   Widget build(BuildContext context) {
@@ -43,7 +69,7 @@ class _MyWidgetState extends State<MyVehicles> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Name : " , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                      child: Text("Name : $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03),),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
@@ -78,14 +104,7 @@ class _MyWidgetState extends State<MyVehicles> {
                 itemCount: MyitemCount+1,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => Container(
-                  child: MyitemCount == index ? GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AddCar()),
-                      );
-                    },
-                    child: Container(
+                  child: MyitemCount == index ? Container(
                        width:MediaQuery.sizeOf(context).width*0.8,
                           margin: EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -108,13 +127,27 @@ class _MyWidgetState extends State<MyVehicles> {
                                   ),
                                   borderRadius: BorderRadius.circular(10)
                                 ),
-                                child: Icon(Icons.add ,size: 45,color: Colors.grey[600],)),
+                                child: GestureDetector(
+                                  
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => AddCar()),
+                                    );
+                                  },
+                                  
+                                  child: 
+                                  Icon(
+                                    Icons.add ,size: 45,color: Colors.grey[600],
+                                  )
+                                  )
+                                  ),
                               SizedBox(height: 50,)
                             ],
                           )
                         ),
                             
-                          ),
+                          
                   )
                         :
                         Container(
@@ -183,7 +216,7 @@ class _MyWidgetState extends State<MyVehicles> {
                               
                               
                               Center(child: Padding(
-                                padding: const EdgeInsets.only(top: 17.0),
+                                padding: const EdgeInsets.only(top: 6.0),
                                 child: ElevatedButton(onPressed: (){}, child: Text("View history" , style: TextStyle(color: Colors.black,),),)
                               ))
 

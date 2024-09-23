@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'globalVariables.dart';
 import 'registerPage.dart';
-
+import 'HomePage.dart';
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -61,8 +61,13 @@ class _SignInPageState extends State<SignInPage> {
                 onPressed: () async{
                   if (_formKey.currentState!.validate()) {
                     try {
-                      await _auth.signIn(int.parse(_idController.text), _passwordController.text);
+                      await _auth.signIn(_idController.text, _passwordController.text);
                       print ('User signed in successfully');
+                      userID = _idController.text;
+                      Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => homePage()),
+                      );
                     }
                     catch(e) {
                       print('Failed to sign in: ${e.toString()}');

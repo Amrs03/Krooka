@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+
+String userID ="";
+
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -142,6 +146,7 @@ class AuthService {
         password: password,
         email: email
       );
+      
     }
     catch(e) {
       rethrow;

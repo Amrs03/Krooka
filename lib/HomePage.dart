@@ -31,7 +31,6 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedIndex = index;
     });
   }
-
   final List pages = [
     //homepage
     MyHomePage(),

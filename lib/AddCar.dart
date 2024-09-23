@@ -31,7 +31,7 @@ class _AddCarState extends State<AddCar> {
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: <Widget>[
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
@@ -230,7 +230,7 @@ class _AddCarState extends State<AddCar> {
                   }
                 },
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 30),
                   width: ScreenWidth * 0.35,
                   height: ScreenHeight * 0.05,
                   decoration: BoxDecoration(
