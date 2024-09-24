@@ -139,21 +139,46 @@ class _MyHomePageState extends State<MyHomePage> {
                   currentIndex: selectedIndex,
                   onTap: (index) async {
                     if (index == 2) {
-                      try {
-                        await _auth.signOut();
-                        print('AuthID : ${AuthService.authID}');
-                        setState(() {
-                          selectedIndex = 0;
-                        });
-                      }
-                      catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to sign out, please try again'))
-                        );
-                        print ('Error signing out : ${e.toString()}');
-                      }
-                    }
-                    else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Sign Out'),
+                            content: Text('Are you sure you want to sign out?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  // Close the dialog without signing out
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  // Proceed with sign out
+                                  try {
+                                    await _auth.signOut();
+                                    print('AuthID : ${AuthService.authID}');
+                                    setState(() {
+                                      selectedIndex = 0;
+                                    });
+                                    // Close the dialog after sign out
+                                    Navigator.of(context).pop();
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Failed to sign out, please try again')),
+                                    );
+                                    print('Error signing out: ${e.toString()}');
+                                    Navigator.of(context).pop(); // Close the dialog even if sign-out fails
+                                  }
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
                       setState(() {
                         selectedIndex = index;
                       });

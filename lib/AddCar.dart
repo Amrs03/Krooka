@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:krooka/globalVariables.dart';
 
 class AddCar extends StatefulWidget {
   const AddCar({super.key});
@@ -19,6 +20,8 @@ class _AddCarState extends State<AddCar> {
   TextEditingController _carColor = TextEditingController();
   TextEditingController _carPlateNum = TextEditingController();
   TextEditingController _carOwnerID = TextEditingController();
+
+  AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +222,19 @@ class _AddCarState extends State<AddCar> {
                 onTap: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
+                      await _auth.supabase.from("Car").insert({
+                        "ChassisNumber" : int.parse(_carVIN.text),
+                        "OwnerID": int.parse(_carOwnerID.text),
+                        "PlateNumber": _carPlateNum.text,
+                        "Manufacturer": _carManufacturer.text,
+                        "Year":_carYear.text,
+                        "Model": _carModel.text,
+                        "Color": _carColor.text,
+                      });
+
+                       // Now We need to add the UserId And CarVin to the 'Have' table 
+                      
+                      print("Car Added");
                       Navigator.pop(context);
                     } 
                     catch (e) {
