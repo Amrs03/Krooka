@@ -178,11 +178,9 @@ class _registerPageState extends State<registerPage> {
                         'DoB': _selectedDate!.toIso8601String().split('T')[0],
                         'AuthID' : result.user!.id
                       });
+                      await _auth.signOut();
                       print (result.user);  
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignInPage()),
-                      );
+                      Navigator.pop(context);
                     } catch (e) {
                       print('Failed to register: ${e.toString()}');
                       ScaffoldMessenger.of(context).showSnackBar(

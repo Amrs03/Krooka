@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'globalVariables.dart';
 import 'registerPage.dart';
 import 'HomePage.dart';
@@ -61,12 +62,12 @@ class _SignInPageState extends State<SignInPage> {
                 onPressed: () async{
                   if (_formKey.currentState!.validate()) {
                     try {
-                      await _auth.signIn(_idController.text, _passwordController.text);
-                      print ('User signed in successfully');
+                      AuthResponse result = await _auth.signIn(_idController.text, _passwordController.text);
+                      print ('User signed in successfully : ${result.user}');
                       userID = _idController.text;
                       Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => homePage()),
+                        context,
+                        MaterialPageRoute(builder: (context) => homePage()),
                       );
                     }
                     catch(e) {

@@ -20,9 +20,8 @@ class _MyWidgetState extends State<MyVehicles> {
   final supabase = Supabase.instance.client;
   String? FirstName;
   String? LastName;
-  DateTime? DoB;
-  String? PhoneNumber;
-
+  // DateTime? DoB;
+  // String? PhoneNumber;
   @override
   void initState(){
     super.initState();
@@ -30,15 +29,16 @@ class _MyWidgetState extends State<MyVehicles> {
   }
   
   Future<void> _getUserInfo() async {
-    dynamic response =null;
+    dynamic response;
+    print('AuthID : ${AuthService.authID}');
     if (userID != ""){
      response = await supabase.from('User').select().eq('IdNumber', userID).single();
     }
     setState(() {
       FirstName = response["FirstName"] as String?;
       LastName = response["LastName"] as String?;
-      //DoB = response['DoB'] as DateTime?;
-      //PhoneNumber = response['PhoneNum'] as String?;
+      // DoB = response['DoB'] as DateTime?;
+      // PhoneNumber = response['PhoneNum'] as String?;
     });
     }
   

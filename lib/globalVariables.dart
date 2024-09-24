@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
-String userID ="";
+String userID = "";
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -122,6 +122,7 @@ class TowTrucks {
 
 class AuthService {
   final supabase = Supabase.instance.client;
+  static String? authID;
 
   Future<AuthResponse> signUp (email, password)async{
     try {
@@ -135,23 +136,34 @@ class AuthService {
       rethrow;
     }
   }
-  Future<void> signIn (ID, password) async {
+  Future<AuthResponse> signIn (ID, password) async {
     try{
       final profileResponse = await supabase.from('User').select().eq('IdNumber', ID);
       if (profileResponse.isEmpty) {
         throw Exception('User with this ID number does not exist');
       }
       final email = '$ID@example.com';
-      await supabase.auth.signInWithPassword(
+      AuthResponse result = await supabase.auth.signInWithPassword(
         password: password,
         email: email
       );
-      
+      authID = result.user!.id;
+      return result;
     }
     catch(e) {
       rethrow;
     }
 
+  }
+
+  Future<void> signOut () async {
+    try {
+      await supabase.auth.signOut();
+      authID = "";
+    }
+    catch(e) {
+      rethrow;
+    }
   }
 }
 

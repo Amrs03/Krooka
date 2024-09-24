@@ -1,9 +1,13 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'myVehicles.dart';
 import 'globalVariables.dart';
 import 'reportAccidents.dart';
-import 'registerPage.dart';
 import 'signInPage.dart';
+import 'Wrapper/AuthWrapper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,10 +27,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  AuthService _auth = AuthService();
   int selectedIndex=0;
 
   //method to update the new selected index
-  void navigateButtomBar(int index){
+  void navigateBottomBar(int index){
     setState(() {
       selectedIndex = index;
     });
@@ -35,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //homepage
     MyHomePage(),
     //profile
-    MyVehicles(),
+    AuthWrapper(child: MyVehicles()),
     //setings
     SignInPage(),
     //toDoPage()
@@ -121,24 +126,73 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: navigateButtomBar,
-        type: BottomNavigationBarType.fixed,
-        items:[
-          //home
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home',),
-
-          //profile
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile',),
-
-          //Login
-          BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login',),
-        ]
+      
+      bottomNavigationBar: StreamBuilder(
+        stream: Supabase.instance.client.auth.onAuthStateChange,
+        builder: (context, snapshot) {
+          final authState = snapshot.data;
+          if (authState != null) {
+            final AuthChangeEvent event = authState.event;
+            switch (event) {
+              case AuthChangeEvent.signedIn:
+                return BottomNavigationBar(
+                  currentIndex: selectedIndex,
+                  onTap: (index) async {
+                    if (index == 2) {
+                      try {
+                        await _auth.signOut();
+                        print('AuthID : ${AuthService.authID}');
+                        setState(() {
+                          selectedIndex = 0;
+                        });
+                      }
+                      catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to sign out, please try again'))
+                        );
+                        print ('Error signing out : ${e.toString()}');
+                      }
+                    }
+                    else {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    }
+                  },
+                  type: BottomNavigationBarType.fixed,
+                  items: [
+                    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+                    BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
+                  ]
+                );
+              default:
+                return BottomNavigationBar(
+                  currentIndex: selectedIndex,
+                  onTap: navigateBottomBar,
+                  type: BottomNavigationBarType.fixed,
+                  items: [
+                    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+                    BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login')
+                  ]
+              );
+            }
+          }
+          return BottomNavigationBar(
+            currentIndex: selectedIndex,
+            onTap: navigateBottomBar,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+              BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login')
+            ]
+          );
+        }
       )
     );
   }
 }
-
 
 
