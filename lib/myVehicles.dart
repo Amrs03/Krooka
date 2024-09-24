@@ -20,8 +20,8 @@ class _MyWidgetState extends State<MyVehicles> {
   final supabase = Supabase.instance.client;
   String? FirstName;
   String? LastName;
-  // DateTime? DoB;
-  // String? PhoneNumber;
+  String? DoB;
+  String? PhoneNumber;
   @override
   void initState(){
     super.initState();
@@ -29,16 +29,12 @@ class _MyWidgetState extends State<MyVehicles> {
   }
   
   Future<void> _getUserInfo() async {
-    dynamic response;
-    print('AuthID : ${AuthService.authID}');
-    if (userID != ""){
-     response = await supabase.from('User').select().eq('IdNumber', userID).single();
-    }
+    dynamic response = await supabase.from('User').select().eq('AuthID', AuthService.authID!).single();
     setState(() {
       FirstName = response["FirstName"] as String?;
       LastName = response["LastName"] as String?;
-      // DoB = response['DoB'] as DateTime?;
-      // PhoneNumber = response['PhoneNum'] as String?;
+      DoB = DateTime.parse(response["DoB"]).toIso8601String().split('T')[0] ;
+      PhoneNumber = response["PhoneNum"] as String?;
     });
     }
   
@@ -73,11 +69,11 @@ class _MyWidgetState extends State<MyVehicles> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Date Of Birth : ",style: TextStyle(fontSize: ScreenWidth*0.03),),
+                      child: Text("Date Of Birth : $DoB",style: TextStyle(fontSize: ScreenWidth*0.03),),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Phone Number : " ,style: TextStyle(fontSize: ScreenWidth*0.03),),
+                      child: Text("Phone Number : $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03),),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),

@@ -11,7 +11,7 @@ class AddCar extends StatefulWidget {
 }
 
 class _AddCarState extends State<AddCar> {
-  
+  String aId = AuthService.authID!;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _carVIN = TextEditingController();
   TextEditingController _carManufacturer = TextEditingController();
@@ -240,7 +240,7 @@ class _AddCarState extends State<AddCar> {
                     catch (e) {
                       print('Failed to add the car: ${e.toString()}');
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to register, please try again')),
+                        SnackBar(content: Text('Failed to add car, please try again')),
                       );
                     }
                   }
