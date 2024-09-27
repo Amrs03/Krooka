@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:krooka/globalVariables.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddCar extends StatefulWidget {
   const AddCar({super.key});
@@ -21,7 +22,7 @@ class _AddCarState extends State<AddCar> {
   TextEditingController _carPlateNum = TextEditingController();
   TextEditingController _carOwnerID = TextEditingController();
 
-  AuthService _auth = AuthService();
+  final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
@@ -222,27 +223,65 @@ class _AddCarState extends State<AddCar> {
                 onTap: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
-                      await _auth.supabase.from("Car").insert({
-                        "ChassisNumber" : int.parse(_carVIN.text),
-                        "OwnerID": int.parse(_carOwnerID.text),
-                        "PlateNumber": _carPlateNum.text,
-                        "Manufacturer": _carManufacturer.text,
-                        "Year":_carYear.text,
-                        "Model": _carModel.text,
-                        "Color": _carColor.text,
-                      });
+                      // Check if the car already exists in the database
+                      dynamic UIDNumber = await supabase.from('User').select('IdNumber').eq('AuthID', aId).single();
+                      dynamic existingCar = await supabase.from("Car").select().eq("ChassisNumber", int.parse(_carVIN.text)).maybeSingle();
 
-                       // Now We need to add the UserId And CarVin to the 'Have' table 
-                      
-                      print("Car Added");
-                      Navigator.pop(context);
-                    } 
-                    catch (e) {
+                      if (existingCar != null) {
+                        print("Car with this ChassisNumber already exists!");
+                        bool isSame = existingCar["OwnerID"] == int.parse(_carOwnerID.text) &&
+                              existingCar["PlateNumber"] == _carPlateNum.text &&
+                              existingCar["Manufacturer"].toString().toLowerCase() == _carManufacturer.text.toLowerCase() &&
+                              existingCar["Year"] == _carYear.text &&
+                              existingCar["Model"].toString().toLowerCase() == _carModel.text.toLowerCase() &&
+                              existingCar["Color"].toString().toLowerCase() == _carColor.text.toLowerCase();
+                        if(isSame){
+                          await supabase.from("Have").insert({
+                            "IdNumber": UIDNumber["IdNumber"].toString(),
+                            "ChassisNumber": int.parse(_carVIN.text),
+                          });
+
+                          print("Relation added to Have table");
+                          print("Car Added");
+                          Navigator.pop(context); 
+                        }
+                        else {
+                        // Fields do not match, show an error message
+                        print("Information is incorrect!");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Information does not match the existing car!')),
+                        );
+                      }
+                        
+                      } else {
+                        // If car doesn't exist, proceed with the insertion
+                        await supabase.from("Car").insert({
+                          "ChassisNumber": int.parse(_carVIN.text),
+                          "OwnerID": int.parse(_carOwnerID.text),
+                          "PlateNumber": _carPlateNum.text,
+                          "Manufacturer": _carManufacturer.text,
+                          "Year": _carYear.text,
+                          "Model": _carModel.text,
+                          "Color": _carColor.text,
+                        });
+
+                        // Now add the UserId and CarVin to the 'Have' table
+                        await supabase.from("Have").insert({
+                          "IdNumber": UIDNumber["IdNumber"].toString(),
+                          "ChassisNumber": int.parse(_carVIN.text),
+                        });
+
+                        print("Car Added");
+                        Navigator.pop(context);  
+                      }
+
+                    } catch (e) {
                       print('Failed to add the car: ${e.toString()}');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to add car, please try again')),
                       );
                     }
+
                   }
                 },
                 child: Container(
