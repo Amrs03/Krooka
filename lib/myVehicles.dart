@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:krooka/globalVariables.dart';
+import 'package:krooka/pastAccidnets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'AddCar.dart';
 
@@ -80,12 +81,11 @@ Future<void> _deleteCar(int chassisNumber) async {
     if (response.isEmpty) {
     await supabase.from("Car").delete().eq('ChassisNumber', chassisNumber);
     print("Car deleted from Car table as it had no more associations.");
-    setState(() {
-      
-    });
+    
     } else {
       print("Car still has other users; it will not be deleted from the Car table.");
     }
+    setState(() {});
   }
   catch(e){
     print("Error: ${e.toString()}");
@@ -246,6 +246,14 @@ Future<void> _deleteCar(int chassisNumber) async {
                                       decoration: BoxDecoration(
                                         color: Colors.grey[400],
                                         borderRadius: BorderRadius.circular(25),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.2), // Shadow color with opacity
+                                            spreadRadius: 2, // How wide the shadow spreads
+                                            blurRadius: 5, // How soft the shadow looks
+                                            offset: Offset(2, 3), // Horizontal and vertical shadow offset
+                                          ),
+                                        ],
                                       ),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,7 +349,9 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                 padding: const EdgeInsets.only(top: 6.0),
                                                 child: ElevatedButton(
                                                   onPressed: () {
-                                                    _deleteCar(car["ChassisNumber"]);
+                                                    Navigator.push(context, 
+                                                    MaterialPageRoute(builder: (context) => PastAccidents(chassisNumber: carDetails['ChassisNumber'],)),
+                                                    );
                                                   },
                                                   child: Text(
                                                     "View history",
@@ -351,7 +361,44 @@ Future<void> _deleteCar(int chassisNumber) async {
                                               )
                                             ),
                                             SizedBox(width: ScreenWidth*0.05,),
-                                            IconButton(onPressed: (){print("item deleted");}, icon: Icon(Icons.delete))
+                                            IconButton(
+                                              onPressed: (){
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context){
+                                                    return AlertDialog(
+                                                      title: Text('Delete Car'),
+                                                      content: Text('Are you sure you want to Delete Car ${index+1}?'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          child: Text('Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            // Proceed with sign out
+                                                            try {
+                                                              _deleteCar(car["ChassisNumber"]);
+                                                              Navigator.of(context).pop();
+                                                            } catch (e) {
+                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                SnackBar(content: Text('Failed to Delete the car, please try again')),
+                                                              );
+                                                              print('Error Deleting the car: ${e.toString()}');
+                                                              Navigator.of(context).pop(); 
+                                                            }
+                                                          },
+                                                          child: Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                                );
+                                                
+                                                },
+                                                 icon: Icon(Icons.delete))
                                         ]),
                                         ],
                                       ),
