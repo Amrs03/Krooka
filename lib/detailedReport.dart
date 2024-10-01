@@ -12,50 +12,64 @@ class detailedReport extends StatefulWidget {
 
 class _detailedReportState extends State<detailedReport> {
   Completer<GoogleMapController> _controller = Completer();
-  LatLng _currentPosition = LatLng(37.7749, -122.4194); // Default to San Francisco
+  LatLng _currentPosition = LatLng(31.955162860469148, 35.91534546775252); // Default to San Francisco
   TextEditingController _locationController = TextEditingController();
+  String _currentAddress = "Searching address...";
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
   }
-
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Check if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled, don't continue.
-      return;
-    }
-
-    // Check for location permissions.
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied.
-        return;
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Please enable the location on your phone');
       }
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Please allow the app to use the location of your device');
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Please allow the app to use the location of your device, by changing the permission rules in the settings -> apps');
+      }
+      Position position = await Geolocator.getCurrentPosition();
+      setState (()  
+        {
+          _currentPosition = LatLng(position.latitude, position.longitude);
+          _goToCurrentPosition();
+          _getAddressFromLatLng(_currentPosition);
+        }
+      );
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are permanently denied.
-      return;
+    catch(e) {
+      print('Can\'t get the current location : $e');
+      Navigator.pop(context);
     }
+  }
 
-    // Get the current location of the user.
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    });
-
-    _goToCurrentPosition();
+   Future<void> _getAddressFromLatLng(LatLng position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      if (placemarks.isNotEmpty) {
+        Placemark address = placemarks[0];
+        String addressStr = "${address.street}, ${address.country}";
+        setState(() {
+          _currentAddress = addressStr;
+        });
+      }
+    } catch (e) {
+      print("Error getting address: $e");
+      setState(() {
+        _currentAddress = "Address not found";
+      });
+    }
   }
 
   Future<void> _goToCurrentPosition() async {
@@ -67,7 +81,6 @@ class _detailedReportState extends State<detailedReport> {
       ),
     ));
   }
-
   Future<void> _searchLocation(String location) async {
     try {
       List<Location> locations = await locationFromAddress(location);
@@ -75,16 +88,15 @@ class _detailedReportState extends State<detailedReport> {
         final target = LatLng(locations.first.latitude, locations.first.longitude);
         final GoogleMapController controller = await _controller.future;
         controller.animateCamera(CameraUpdate.newLatLng(target));
-
         setState(() {
           _currentPosition = target;
+          _getAddressFromLatLng(_currentPosition);
         });
       }
     } catch (e) {
-      print('Error: $e');
+      print('$location is not found : $e');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +113,12 @@ class _detailedReportState extends State<detailedReport> {
             ),
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
+            },
+            onCameraMove: (Position) {
+              setState(() {
+                _currentPosition = Position.target;
+              });
+              _getAddressFromLatLng(_currentPosition);
             },
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
@@ -135,15 +153,32 @@ class _detailedReportState extends State<detailedReport> {
               ),
             ),
           ),
+          Center(
+            child: Icon(
+              Icons.location_on,
+              size: 40.0,
+              color: Colors.red,
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            left: 15,
+            right: 15,
+            child: Container(
+              padding: EdgeInsets.all(8.0),
+              color: Colors.white,
+              child: Text(
+                _currentAddress,
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: //_getCurrentLocation for backend dev
-            () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => detailedReport2()),
-          );
+        onPressed: () {
+          _getCurrentLocation();
         },
         child: Icon(Icons.my_location),
       ),
