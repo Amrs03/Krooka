@@ -1,13 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:krooka/detailedReport4.dart';
 import 'myVehicles.dart';
 import 'globalVariables.dart';
 import 'reportAccidents.dart';
 import 'signInPage.dart';
 import 'Wrapper/AuthWrapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'detailedReport2.dart';
 class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,10 @@ class homePage extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: MyHomePage(),
+        routes: {
+          '/DR2' : (context) => detailedReport2(),
+          '/DR4' : (context) => detailedReport4()
+        } ,
       ),
     );
   }

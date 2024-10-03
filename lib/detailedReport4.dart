@@ -2,25 +2,21 @@ import 'package:flutter/material.dart';
 import 'detailedReport5.dart';
 
 class detailedReport4 extends StatefulWidget {
-  final int numberOfFields; // Counter value from DetailedReport3
-
-  detailedReport4({required this.numberOfFields});
+  const detailedReport4({super.key});
 
   @override
   _detailedReport4State createState() => _detailedReport4State();
 }
 
 class _detailedReport4State extends State<detailedReport4> {
-  // List to store text controllers for plate numbers
+  late int numberOfFields;
   List<TextEditingController> _controllers = [];
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // Initialize text controllers based on the number of fields
-    _controllers = List.generate(widget.numberOfFields, (index) => TextEditingController());
   }
-
   @override
   void dispose() {
     // Dispose all text controllers when the widget is destroyed
@@ -30,6 +26,9 @@ class _detailedReport4State extends State<detailedReport4> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    numberOfFields = data['Counter'];
+    _controllers = List.generate(numberOfFields, (index) => TextEditingController());
     return Scaffold(
       appBar: AppBar(
         title: Text('Detailed Report 4'),
@@ -44,22 +43,30 @@ class _detailedReport4State extends State<detailedReport4> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            // Dynamically create the text fields for each car plate number
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.numberOfFields,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextField(
-                      controller: _controllers[index],
-                      decoration: InputDecoration(
-                        labelText: 'Car ${index + 1} Plate Number',
-                        border: OutlineInputBorder(),
+            Form(
+              key: _formKey,
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: numberOfFields,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _controllers[index],
+                        validator: (value){
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the car plate number';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Car ${index + 1} Plate Number',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
             Row(
@@ -72,12 +79,13 @@ class _detailedReport4State extends State<detailedReport4> {
                   child: Text('Previous'),
                 ),
                 ElevatedButton(
-                  onPressed: //place pics in DB
-                      () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => detailedReport5()),
-                    );
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => detailedReport5()),
+                      );
+                    }
                   },
                   child: Text('Next'),
                 ),

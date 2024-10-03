@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'globalVariables.dart';
+import 'detailedReport.dart';
 
 
 class reportAccidents extends StatefulWidget {
@@ -15,23 +16,27 @@ class _reportAccidentsState extends State<reportAccidents> {
       appBar: AppBar(),
       endDrawer: AppDrawer(),
       body: Center(
-          child: Column(
-            children: <Widget>[
-              Container(height: 120.0),
-              ListTile(
-                leading: Icon(Icons.car_crash),
-                title: Text("Detailed Report"),
-                //onTap: , add the logic here
-              ),
-              ListTile(
-                leading: Icon(Icons.car_rental),
-                title: Text("Quick Report"),
-                //onTap: , add the logic here
-              )
-            ],
-          )
+        child: Column(
+          children: <Widget>[
+            Container(height: 120.0),
+            ListTile(
+              leading: Icon(Icons.car_crash),
+              title: Text("Detailed Report"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => detailedReport())
+                );
+              }
+            ),
+            ListTile(
+              leading: Icon(Icons.car_rental),
+              title: Text("Quick Report"),
+              //onTap: , add the logic here
+            )
+          ],
+        )
       ),
-
     );
   }
 }

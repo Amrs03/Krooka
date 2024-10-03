@@ -59,7 +59,15 @@ class _detailedReportState extends State<detailedReport> {
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
       if (placemarks.isNotEmpty) {
         Placemark address = placemarks[0];
-        String addressStr = "${address.street}, ${address.country}";
+        print ('address : $address');
+        String addressStr;
+        if (address.thoroughfare == ""){
+          addressStr = "N/A, ${address.subLocality}";
+        }
+        else { 
+          addressStr = "${address.thoroughfare}, ${address.subLocality}";
+        }
+        print (addressStr);
         setState(() {
           _currentAddress = addressStr;
         });
@@ -77,7 +85,7 @@ class _detailedReportState extends State<detailedReport> {
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         target: _currentPosition,
-        zoom: 14.0,
+        zoom: 16.0,
       ),
     ));
   }
@@ -97,6 +105,7 @@ class _detailedReportState extends State<detailedReport> {
       print('$location is not found : $e');
     }
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,7 +126,10 @@ class _detailedReportState extends State<detailedReport> {
             onCameraMove: (Position) {
               setState(() {
                 _currentPosition = Position.target;
+                _locationController.clear();
               });
+            },
+            onCameraIdle: () {
               _getAddressFromLatLng(_currentPosition);
             },
             myLocationEnabled: true,
@@ -129,16 +141,25 @@ class _detailedReportState extends State<detailedReport> {
             right: 15,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15),
-              color: Colors.white,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _locationController,
                       decoration: InputDecoration(
-                        hintText: 'Enter location',
+                        hintText: _currentAddress,
                         border: InputBorder.none,
                       ),
+                      style: TextStyle(fontSize: 12),
+                      onTap: () {
+                        setState(() {
+                          _currentAddress = "";
+                        });
+                      },
                     ),
                   ),
                   IconButton(
@@ -154,34 +175,55 @@ class _detailedReportState extends State<detailedReport> {
             ),
           ),
           Center(
-            child: Icon(
-              Icons.location_on,
-              size: 40.0,
-              color: Colors.red,
-            ),
-          ),
-          Positioned(
-            bottom: 50,
-            left: 15,
-            right: 15,
             child: Container(
-              padding: EdgeInsets.all(8.0),
-              color: Colors.white,
-              child: Text(
-                _currentAddress,
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              margin: EdgeInsets.only(bottom: 10),
+              child: Icon(
+                Icons.location_on,
+                size: 20.0,
+                color: Colors.red,
               ),
             ),
           ),
+          Positioned(
+            bottom:10,
+            left: MediaQuery.of(context).size.width * 0.35,
+            right: MediaQuery.of(context).size.width * 0.35,
+            child: GestureDetector(
+              onTap: () {
+                print("Address :${_currentAddress.toString()}");
+                Navigator.pushNamed(context, '/DR2', arguments: <String, dynamic>{
+                  'lat' : _currentPosition.latitude,
+                  'long' : _currentPosition.longitude
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width:MediaQuery.sizeOf(context).width *0.2,
+                  height: MediaQuery.sizeOf(context).height *0.1,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black, width: 1),
+                  ),
+                  child: Center(child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))),
+                ),
+              ),
+            ),
+          )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _getCurrentLocation();
-        },
-        child: Icon(Icons.my_location),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 25),
+        child: FloatingActionButton(
+          onPressed: () {
+            _getCurrentLocation();
+          },
+          child: Icon(Icons.my_location),
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
     );
   }
 }
