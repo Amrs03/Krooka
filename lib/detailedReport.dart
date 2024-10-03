@@ -207,7 +207,10 @@ class _detailedReportState extends State<detailedReport> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.black, width: 1),
                   ),
-                  child: Center(child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))),
+                  child: Center(
+                    //child: Icon(Icons.room),
+                    child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))
+                  ),
                 ),
               ),
             ),

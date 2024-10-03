@@ -41,6 +41,7 @@ class _detailedReport4State extends State<detailedReport4> {
             Text(
               'Enter the plate numbers for the cars:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              
             ),
             SizedBox(height: 10),
             Form(
@@ -61,7 +62,10 @@ class _detailedReport4State extends State<detailedReport4> {
                         },
                         decoration: InputDecoration(
                           labelText: 'Car ${index + 1} Plate Number',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                          
                         ),
                       ),
                     );

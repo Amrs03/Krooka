@@ -12,6 +12,7 @@ import 'detailedReport2.dart';
 class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+ 
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -52,13 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   @override
   Widget build(BuildContext context) {
+    final ScreenHeight = MediaQuery.sizeOf(context).height;
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[100],
       body : selectedIndex != 0 ? pages[selectedIndex] : 
       Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            
+            Spacer(),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -67,67 +72,133 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                margin: EdgeInsets.symmetric(horizontal: 22, vertical: 20),
                 padding: EdgeInsets.only(left : 40),
                 height: MediaQuery.sizeOf(context).height*0.15,
-                width : MediaQuery.sizeOf(context).width*0.9,
+                width : MediaQuery.sizeOf(context).width*0.96,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30)
-                  )
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black12 , width:2),
+                  boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade500, // Shadow color with opacity
+                                    spreadRadius: 1, // How wide the shadow spreads
+                                    blurRadius: 7, // How soft the shadow looks
+                                    offset: Offset(4.0, 4.0), // Horizontal and vertical shadow offset
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white, // Shadow color with opacity
+                                    spreadRadius: 1, // How wide the shadow spreads
+                                    blurRadius: 7, // How soft the shadow looks
+                                    offset: Offset(-4.0, -4.0), // Horizontal and vertical shadow offset
+                                  ),
+                                ],
                 ),
-                child: Center(
-                  child: ListTile(
-                    leading: Icon(Icons.car_crash, size : 50),
-                    title: Text("Report Accident", style: TextStyle(fontSize: 28)),
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.car_crash, size : 50),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Report Accident", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-            GestureDetector(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                padding: EdgeInsets.only(left : 40),
-                height: MediaQuery.sizeOf(context).height*0.15,
-                width : MediaQuery.sizeOf(context).width*0.9,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  child: Container(
+                    height: ScreenHeight*0.18,
+                    width: ScreenWidth*0.42,
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black12, width: 2),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade500, 
+                                    spreadRadius: 1,
+                                    blurRadius: 7, 
+                                    offset: Offset(4.0, 4.0), 
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    spreadRadius: 1,
+                                    blurRadius: 7,
+                                    offset: Offset(-4.0, -4.0), 
+                                  ),
+                                ],
+                
+                    ),
+                    child: Center(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.directions_car ,size: 45),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text("My Vehicles", style: TextStyle(fontSize: ScreenWidth*0.04 , fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
+                            ),
+                          ],
+                        ),
+                         
+                      ),
+                    ),
                   )
                 ),
-                child: Center(
-                  child: ListTile(
-                    leading: Icon(Icons.car_rental, size: 50),
-                    title: Text("My Vehicles", style: TextStyle(fontSize: 30)), 
-                  ),
-                ),
-              )
-            ),
-            GestureDetector(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                padding: EdgeInsets.only(left : 40),
-                height: MediaQuery.sizeOf(context).height*0.15,
-                width : MediaQuery.sizeOf(context).width*0.9,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30)
+                GestureDetector(
+                  child: Container(
+                    height: ScreenHeight*0.18,
+                    width: ScreenWidth*0.42,
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black12, width: 2),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade500, 
+                                    spreadRadius: 1, 
+                                    blurRadius: 7, 
+                                    offset: Offset(4.0, 4.0), 
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    spreadRadius: 1,
+                                    blurRadius: 7,
+                                    offset: Offset(-4.0, -4.0),
+                                  ),
+                                ],
+                
+                    ),
+                    child: Center(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.recent_actors ,size: 45),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text("Accidents", style: TextStyle(fontSize: ScreenWidth*0.04,  fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
+                            ),
+                          ],
+                        ),
+                         
+                      ),
+                    ),
                   )
                 ),
-                child: Center(
-                  child: ListTile(
-                    leading: Icon(Icons.recent_actors, size: 50),
-                    title: Text("Past Accidents", style: TextStyle(fontSize: 30)),
-                  ),
-                ),
-              ),
+              ],
             ),
+            SizedBox(height: 20,)
           ],
         ),
       ),

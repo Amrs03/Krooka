@@ -15,14 +15,14 @@ class _detailedReport2State extends State<detailedReport2> {
   String? _option1;
   String? _option2;
   String? _option3;
-  int _counter = 2;
+  int _counter = 1;
   void _incrementCounter () {
     setState(() {
       _counter++;
     });
   }
   void _decrementCounter () {
-    if (_counter-1 >= 2){
+    if (_counter-1 >= 1){
       setState(() {
         _counter--;
       });
@@ -32,10 +32,10 @@ class _detailedReport2State extends State<detailedReport2> {
   Widget build(BuildContext context) {
     dynamic data = ModalRoute.of(context)!.settings.arguments;
     bool allOptionsSelected = _option1 != null && _option2 != null && _option3 != null;
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -47,7 +47,7 @@ class _detailedReport2State extends State<detailedReport2> {
             ),
           ),
           // Option 1
-          Padding(child: Text("Are there any injuries ?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), padding: EdgeInsets.only(left: 20)),
+          Padding(child: Text("Are there any injuries ?", style: TextStyle(fontSize: ScreenWidth*0.04, fontWeight: FontWeight.bold)), padding: EdgeInsets.only(left: 20)),
           ListTile(
             title: const Text('Yes', style: TextStyle(fontWeight: FontWeight.bold)),
             leading: Radio<String>(
@@ -73,7 +73,7 @@ class _detailedReport2State extends State<detailedReport2> {
             ),
           ),
           // Option 2
-          Padding(child: Text("Is everyone involved present ?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),padding: EdgeInsets.only(left: 20)),
+          Padding(child: Text("Is everyone involved present ?", style: TextStyle(fontSize:ScreenWidth*0.04, fontWeight: FontWeight.bold)),padding: EdgeInsets.only(left: 20)),
           ListTile(
             title: const Text('Yes', style: TextStyle(fontWeight: FontWeight.bold)),
             leading: Radio<String>(
@@ -101,7 +101,7 @@ class _detailedReport2State extends State<detailedReport2> {
             ),
           ),
           // Option 3
-          Padding(child: Text("Does everyone have a valid insurance ?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),padding: EdgeInsets.only(left: 20)),
+          Padding(child: Text("Does everyone have a valid insurance ?", style: TextStyle(fontSize: ScreenWidth*0.04, fontWeight: FontWeight.bold)),padding: EdgeInsets.only(left: 20)),
           ListTile(
             title: const Text('Yes', style: TextStyle(fontWeight: FontWeight.bold)),
             leading: Radio<String>(
@@ -131,7 +131,7 @@ class _detailedReport2State extends State<detailedReport2> {
             padding: EdgeInsets.only(left: 20, top : 20),
             child: Text(
               'Number of involved Cars : ',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+              style: TextStyle(fontSize: ScreenWidth*0.04, fontWeight: FontWeight.bold)
             ),
           )
           :
