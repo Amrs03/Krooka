@@ -12,6 +12,7 @@ class _detailedReport4State extends State<detailedReport4> {
   late int numberOfFields;
   List<TextEditingController> _controllers = [];
   final _formKey = GlobalKey<FormState>();
+  List<String> _plates  = [];
 
   @override
   void initState() {
@@ -58,6 +59,7 @@ class _detailedReport4State extends State<detailedReport4> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter the car plate number';
                           }
+                          _plates.add(value);
                           return null;
                         },
                         decoration: InputDecoration(
@@ -85,10 +87,14 @@ class _detailedReport4State extends State<detailedReport4> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => detailedReport5()),
-                      );
+
+                      Navigator.pushNamed(context, '/DR5', arguments: <String, dynamic>{
+                        'Lat' : data['Lat'],
+                        'Long' : data['Long'],
+                        'Inj' : data['Inj'],
+                        'Insurance' : data['Insurance'],
+                        'Plates' : _plates
+                      });
                     }
                   },
                   child: Text('Next'),

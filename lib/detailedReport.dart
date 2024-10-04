@@ -208,8 +208,8 @@ class _detailedReportState extends State<detailedReport> {
                     border: Border.all(color: Colors.black, width: 1),
                   ),
                   child: Center(
-                    //child: Icon(Icons.room),
-                    child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))
+                    child: Icon(Icons.room),
+                    // child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))
                   ),
                 ),
               ),

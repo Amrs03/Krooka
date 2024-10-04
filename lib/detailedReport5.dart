@@ -14,6 +14,7 @@ class detailedReport5 extends StatefulWidget {
 class _detailedReport5State extends State<detailedReport5> {
   final ImagePicker _picker = ImagePicker();
   final bucket = Supabase.instance.client.storage.from('accident-images');
+  final SupabaseClient supabase = Supabase.instance.client;
   List<File> _images = [];
 
   // Function to pick an image from the camera
@@ -36,12 +37,13 @@ class _detailedReport5State extends State<detailedReport5> {
     }
   }
 
-  Future<void> _uploadImagesToStorage () async {
+  Future<void> _uploadImagesToStorage (int id) async {
     try {
       for (int i = 0; i < _images.length; i++){
+  
         Uint8List fileBytes = await _images[i].readAsBytes();
-        String filePath = 'user-uploads/${i+1}';
-        await bucket.uploadBinary(filePath, fileBytes);
+        String filePath = 'user-uploads/$id-${i+1}';
+        await bucket.uploadBinary(filePath, fileBytes, fileOptions: FileOptions(contentType: 'image/jpeg'));
       }
     }
     catch(e) {
@@ -117,14 +119,34 @@ class _detailedReport5State extends State<detailedReport5> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    _showSnackBar("Your report has been issued. Get to the side of the road.");
-                    await _uploadImagesToStorage();
-                    dynamic publicUrl = bucket.getPublicUrl('user-uploads/1');
-                    print (publicUrl);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => MyHomePage()),
-                    // );
+                    try {
+                      if (_images.isEmpty) {
+                        _showSnackBar("Please upload the photos of the accident");
+                        _showSnackBar("Your report has been issued. Get to the side of the road.");
+                        dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+                        print (data);
+                        final response = await supabase.from('Accident').insert({
+                          "Injuries" : data['Inj'] == 'Yes' ? true : false,
+                          "NumberOfCars" : data['Plates'].length,
+                          "latitude" : data['Lat'],
+                          "longitude" : data['Long'],
+                        }).select('AccidentID').single();
+                        print (response);
+                      }
+                      else {
+                        // int AccidentID
+                        // await _uploadImagesToStorage();
+                        // dynamic publicUrl = bucket.getPublicUrl('user-uploads/1');
+                        // print (publicUrl); 
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => MyHomePage()),
+                        // );
+                      }
+                    }
+                    catch(e){
+                      print('Error submitting the report : $e');
+                    }
                   },
                   child: Text('Next'),
                 ),

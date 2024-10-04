@@ -35,7 +35,8 @@ class _detailedReport2State extends State<detailedReport2> {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -157,8 +158,7 @@ class _detailedReport2State extends State<detailedReport2> {
                 icon: Icon(Icons.add_circle_outlined, size : 38)
               )
             ],
-          ):
-          Container(),
+          ):Container(),
           Spacer(),
           Padding(
             padding: const EdgeInsets.all(16.0),

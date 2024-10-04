@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:krooka/detailedReport4.dart';
+import 'package:krooka/detailedReport5.dart';
 import 'myVehicles.dart';
 import 'globalVariables.dart';
 import 'reportAccidents.dart';
@@ -19,7 +20,8 @@ class homePage extends StatelessWidget {
         home: MyHomePage(),
         routes: {
           '/DR2' : (context) => detailedReport2(),
-          '/DR4' : (context) => detailedReport4()
+          '/DR4' : (context) => detailedReport4(),
+          '/DR5' : (context) => detailedReport5()
         } ,
       ),
     );
