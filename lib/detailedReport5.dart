@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krooka/HomePage.dart';
+import 'dart:typed_data';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class detailedReport5 extends StatefulWidget {
   @override
@@ -10,6 +13,7 @@ class detailedReport5 extends StatefulWidget {
 
 class _detailedReport5State extends State<detailedReport5> {
   final ImagePicker _picker = ImagePicker();
+  final bucket = Supabase.instance.client.storage.from('accident-images');
   List<File> _images = [];
 
   // Function to pick an image from the camera
@@ -31,6 +35,20 @@ class _detailedReport5State extends State<detailedReport5> {
       });
     }
   }
+
+  Future<void> _uploadImagesToStorage () async {
+    try {
+      for (int i = 0; i < _images.length; i++){
+        Uint8List fileBytes = await _images[i].readAsBytes();
+        String filePath = 'user-uploads/${i+1}';
+        await bucket.uploadBinary(filePath, fileBytes);
+      }
+    }
+    catch(e) {
+      print('Error uploading image : $e');
+    }    
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -43,7 +61,7 @@ class _detailedReport5State extends State<detailedReport5> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detailed Report 5'),
+        title: Text('Accident photos'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -75,7 +93,7 @@ class _detailedReport5State extends State<detailedReport5> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -88,7 +106,6 @@ class _detailedReport5State extends State<detailedReport5> {
                 },
               ),
             ),
-            // Next and Previous buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -99,17 +116,16 @@ class _detailedReport5State extends State<detailedReport5> {
                   child: Text('Previous'),
                 ),
                 ElevatedButton(
-                  onPressed:
-                    // submittion to database and return to home
-                      () {
-                        _showSnackBar("Your report has been issued. Get to the side of the road.");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
+                  onPressed: () async {
+                    _showSnackBar("Your report has been issued. Get to the side of the road.");
+                    await _uploadImagesToStorage();
+                    dynamic publicUrl = bucket.getPublicUrl('user-uploads/1');
+                    print (publicUrl);
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyHomePage()),
+                    // );
                   },
-
-
                   child: Text('Next'),
                 ),
               ],
