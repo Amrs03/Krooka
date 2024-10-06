@@ -97,49 +97,100 @@ Future<void> _deleteCar(int chassisNumber) async {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile"),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: Colors.grey[100],
       body: ListView(
         children: [
           Container(
-            height: ScreenHeight*0.2,
-            margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(30)
-              
+            padding: EdgeInsets.only(top: 7, bottom: 3),
+            height: ScreenHeight *0.05,
+            color: const Color.fromARGB(255, 248, 200, 57),
+            child: Center(
+              child: Text("Profile" ,style: TextStyle(fontWeight: FontWeight.bold),),
             ),
-            child: Row(
-              children: [
-                Icon(Icons.person_2 , size: ScreenWidth*0.32,),
-                Column(
+          ),
+          Stack(
+            children:[
+              Container(
+                height: ScreenHeight*0.17,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 248, 200, 57),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25))
+                ),
+              )
+              ,Center(
+                child: Container(
+                width: ScreenWidth *0.75,
+                height: ScreenHeight*0.2,
+                margin: EdgeInsets.only(top:ScreenHeight *0.06),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: const Color.fromARGB(255, 255, 192, 3), width: 2),
+                  boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
+                    spreadRadius: 5, // How much the shadow spreads
+                    blurRadius: 10, // Smoothens the edges of the shadow
+                    offset: Offset(0, 5), // Horizontal and vertical shadow offset
+                  ),
+                ],
+                ),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Name : $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                    
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Text("Name : $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Text("Date Of Birth : $DoB",style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Text("Phone Number : $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Text("Num. Of Accidents : " ,style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Date Of Birth : $DoB",style: TextStyle(fontSize: ScreenWidth*0.03),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Phone Number : $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text("Num. Of Accidents : " ,style: TextStyle(fontSize: ScreenWidth*0.03),),
-                    ),
+                    
                   ],
                 ),
                 
-              ],
-            ),
-            
+                            ),
+              ),
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color:  const Color.fromARGB(255, 255, 192, 3) , width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
+                        spreadRadius: 2, // How much the shadow spreads
+                        blurRadius: 10, // Smoothens the edges of the shadow
+                        offset: Offset(0, -5), // Horizontal and vertical shadow offset
+                      ),
+                    ],
+                  
+                  ),
+                  child: CircleAvatar(
+                    radius: ScreenWidth *0.11,
+                    backgroundColor: Colors.white,
+                    
+                    child:Icon(Icons.person_2 , size: ScreenWidth*0.15,color: Colors.black,)
+                  ),
+                ),
+              ),
+            ]
           ),
           Container(
             margin: EdgeInsets.only(left: 30, top: 15),
@@ -217,7 +268,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                                       width: ScreenWidth * 0.8,
                                       margin: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: Colors.grey[400],
+                                        color: Colors.white,
                                         borderRadius: BorderRadius.circular(25),
                                       ),
                                       child: Center(
@@ -244,14 +295,15 @@ Future<void> _deleteCar(int chassisNumber) async {
                                       height: ScreenHeight * 0.5,
                                       margin: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: Colors.grey[400],
+                                        color: Colors.white,
                                         borderRadius: BorderRadius.circular(25),
+                                        border: Border.all(color: const Color.fromARGB(255, 255, 192, 3), width: 2 ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.2), // Shadow color with opacity
-                                            spreadRadius: 2, // How wide the shadow spreads
-                                            blurRadius: 5, // How soft the shadow looks
-                                            offset: Offset(2, 3), // Horizontal and vertical shadow offset
+                                            color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
+                                            spreadRadius: 1, // How much the shadow spreads
+                                            blurRadius: 10, // Smoothens the edges of the shadow
+                                            offset: Offset(0, 5), // Horizontal and vertical shadow offset
                                           ),
                                         ],
                                       ),
@@ -268,75 +320,210 @@ Future<void> _deleteCar(int chassisNumber) async {
                                           Padding(
                                             padding: const EdgeInsets.all(9.0),
                                             child: Row(
+                                              //mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text(
-                                                  "Car Manufacturer: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035),
+                                                  "Manufacturer:\u00A0",
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
+                                                      shadows: [
+                                                        Shadow(
+                                                          offset: Offset(-1, -1),
+                                                          color: Colors.black, // Black shadow on the top-left
+                                                          blurRadius: 1.5,
+                                                        ),
+                                                        Shadow(
+                                                          offset: Offset(1, -1),
+                                                          color: Colors.black, // Black shadow on the top-right
+                                                          blurRadius: 1.5,
+                                                        ),
+                                                        Shadow(
+                                                          offset: Offset(1, 1),
+                                                          color: Colors.black, // Black shadow on the bottom-right
+                                                          blurRadius: 1.5,
+                                                          
+                                                        ),
+                                                          Shadow(
+                                                            offset: Offset(-1, 1),
+                                                            color: Colors.black, // Black shadow on the bottom-left
+                                                            blurRadius: 1.5,
+                                                          ),
+                                                        ]
+                                                  ),
                                                 ),
+                                                Spacer(),
                                                 Text(
                                                   carDetails["Manufacturer"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenWidth * 0.04),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.045 ,),
                                                 ),
+                                                Spacer()
                                               ],
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(9.0),
                                             child: Row(
+                                              //mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text(
-                                                  "Car Model: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035),
+                                                  "Model: ",
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035,color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: Offset(-1, -1),
+                                                        color: Colors.black, // Black shadow on the top-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, -1),
+                                                        color: Colors.black, // Black shadow on the top-right
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-right
+                                                        blurRadius: 1.5,
+                                                        
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(-1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                    ]
+                                                  ),
                                                 ),
+                                                Spacer(),
                                                 Text(
                                                   carDetails["Model"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenWidth * 0.04),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
                                                 ),
+                                                Spacer(),
                                               ],
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(9.0),
                                             child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text(
                                                   "Year: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: Offset(-1, -1),
+                                                        color: Colors.black, // Black shadow on the top-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, -1),
+                                                        color: Colors.black, // Black shadow on the top-right
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-right
+                                                        blurRadius: 1.5,
+                                                        
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(-1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                    ]
+                                                  ),
                                                 ),
+                                                Spacer(),
                                                 Text(
                                                   carDetails["Year"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenWidth * 0.04),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
                                                 ),
+                                                Spacer(),
                                               ],
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(9.0),
                                             child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text(
-                                                  "Car Color: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035),
+                                                  "Color: ",
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: Offset(-1, -1),
+                                                        color: Colors.black, // Black shadow on the top-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, -1),
+                                                        color: Colors.black, // Black shadow on the top-right
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-right
+                                                        blurRadius: 1.5,
+                                                        
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(-1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                    ]
+                                                  ),
                                                 ),
+                                                Spacer(),
                                                 Text(
                                                   carDetails["Color"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenWidth * 0.04),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
                                                 ),
+                                                Spacer(),
                                               ],
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(9.0),
                                             child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text(
                                                   "Plate Number: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: Offset(-1, -1),
+                                                        color: Colors.black, // Black shadow on the top-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, -1),
+                                                        color: Colors.black, // Black shadow on the top-right
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-right
+                                                        blurRadius: 1.5,
+                                                        
+                                                      ),
+                                                      Shadow(
+                                                        offset: Offset(-1, 1),
+                                                        color: Colors.black, // Black shadow on the bottom-left
+                                                        blurRadius: 1.5,
+                                                      ),
+                                                    ]
+                                                  ),
                                                 ),
+                                                Spacer(),
                                                 Text(
                                                   carDetails["PlateNumber"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenWidth * 0.04),
+                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
                                                 ),
+                                                Spacer(),
                                                 
                                               ],
                                             ),
@@ -348,6 +535,18 @@ Future<void> _deleteCar(int chassisNumber) async {
                                               child: Padding(
                                                 padding: const EdgeInsets.only(top: 6.0),
                                                 child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: const Color.fromARGB(255, 249, 208, 87),
+                                                    foregroundColor: Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      side :BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1,
+                                                    )
+                                                    )
+                                                    
+                                                  ),
                                                   onPressed: () {
                                                     Navigator.push(context, 
                                                     MaterialPageRoute(builder: (context) => PastAccidents(chassisNumber: carDetails['ChassisNumber'],)),
@@ -355,7 +554,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                   },
                                                   child: Text(
                                                     "View history",
-                                                    style: TextStyle(color: Colors.black),
+                                                    //style: TextStyle(color: Colors.black),
                                                   ),
                                                 ),
                                               )
