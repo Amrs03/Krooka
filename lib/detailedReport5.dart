@@ -44,6 +44,11 @@ class _detailedReport5State extends State<detailedReport5> {
         Uint8List fileBytes = await _images[i].readAsBytes();
         String filePath = 'user-uploads/$id-${i+1}';
         await bucket.uploadBinary(filePath, fileBytes, fileOptions: FileOptions(contentType: 'image/jpeg'));
+        dynamic publicUrl = bucket.getPublicUrl(filePath);
+        await supabase.from("Accident_Photos").insert({
+          "accidentId" : id,
+          "photoUrl" : publicUrl,
+        });
       }
     }
     catch(e) {
@@ -122,7 +127,11 @@ class _detailedReport5State extends State<detailedReport5> {
                     try {
                       if (_images.isEmpty) {
                         _showSnackBar("Please upload the photos of the accident");
-                        _showSnackBar("Your report has been issued. Get to the side of the road.");
+                       
+                        
+                      }
+                      else {
+                         _showSnackBar("Your report has been issued. Get to the side of the road.");
                         dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
                         print (data);
                         final response = await supabase.from('Accident').insert({
@@ -131,17 +140,25 @@ class _detailedReport5State extends State<detailedReport5> {
                           "latitude" : data['Lat'],
                           "longitude" : data['Long'],
                         }).select('AccidentID').single();
-                        print (response);
-                      }
-                      else {
-                        // int AccidentID
-                        // await _uploadImagesToStorage();
-                        // dynamic publicUrl = bucket.getPublicUrl('user-uploads/1');
-                        // print (publicUrl); 
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => MyHomePage()),
-                        // );
+
+
+                        List plates = data['Plates'];
+                        plates.forEach((plate ) async{
+                          await supabase.from("Been In").insert({
+                            "PlateNumber" : plate,
+                            "AccidentID" : response['AccidentID'],
+                            "EligForComp" : false,
+                            "Status" : "Pending",
+                          });
+                        });
+                      
+                        await _uploadImagesToStorage(response["AccidentID"]);
+                        
+                        
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
+                        );
                       }
                     }
                     catch(e){
