@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'detailedReport5.dart';
+import 'package:krooka/globalVariables.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class detailedReport4 extends StatefulWidget {
   const detailedReport4({super.key});
@@ -13,7 +15,9 @@ class _detailedReport4State extends State<detailedReport4> {
   List<TextEditingController> _controllers = [];
   final _formKey = GlobalKey<FormState>();
   List<String> _plates  = [];
-
+  String aId = AuthService.authID!;
+  final supabase = Supabase.instance.client;
+  String? Mycar;
   @override
   void initState() {
     super.initState();
@@ -25,11 +29,18 @@ class _detailedReport4State extends State<detailedReport4> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final ScreenHeight = MediaQuery.of(context).size.height;
+    final ScreenWidth = MediaQuery.of(context).size.width;
+
     dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     numberOfFields = data['Counter'];
     _controllers = List.generate(numberOfFields, (index) => TextEditingController());
+    if(Mycar != null){
+    _controllers[0].text =Mycar!;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Detailed Report 4'),
@@ -56,6 +67,7 @@ class _detailedReport4State extends State<detailedReport4> {
                       child: TextFormField(
                         controller: _controllers[index],
                         validator: (value){
+                          
                           if (value == null || value.isEmpty) {
                             return 'Please enter the car plate number';
                           }
@@ -75,6 +87,96 @@ class _detailedReport4State extends State<detailedReport4> {
                 ),
               ),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                final uid = await supabase
+                    .from("User")
+                    .select("IdNumber")
+                    .eq("AuthID", aId)
+                    .single();
+                
+                final response = await supabase
+                    .from("Have")
+                    .select("ChassisNumber")
+                    .eq("IdNumber", uid["IdNumber"]);
+                
+                final List chassisNumbers = response.map((item) => item["ChassisNumber"]).toList();
+
+                final carDetails = await Future.wait(
+                  chassisNumbers.map((chassisNumber) async {
+                    return await supabase
+                        .from("Car")
+                        .select("*")
+                        .eq("ChassisNumber", chassisNumber)
+                        .single(); 
+                  }).toList(),
+                );
+
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.grey[200],
+                      title: Text("Choose One of Your Cars"),
+                      content: Container(
+                        constraints: BoxConstraints(
+                          maxHeight: ScreenHeight *0.5
+                        ),
+                        child: ListView.builder(
+                          
+                          shrinkWrap: true,
+                          
+                          itemCount: carDetails.length,
+                          itemBuilder: (context, index) {
+                            final car = carDetails[index];
+                             
+                        
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  Mycar=car['PlateNumber'];
+                                });
+                                Navigator.of(context).pop();
+
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 3.0),
+                                padding: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(color: Colors.black26, width: 2),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${car['Manufacturer']} ${car['Model']} ",
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth*0.045),
+                                    ),
+                                    Text("${car['PlateNumber']}"),   
+                                  ],
+                                ),
+                                                        
+                              ),
+                            );
+                            
+                          },
+                          
+                        ),
+                      ),
+                      actions: [
+                        Center(child: ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("cancel")))
+                      ],
+                    );
+                    
+                  },
+                  
+                );
+              },
+              child: Text("Show Cars"),
+            ),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
