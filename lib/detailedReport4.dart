@@ -18,6 +18,9 @@ class _detailedReport4State extends State<detailedReport4> {
   String aId = AuthService.authID!;
   final supabase = Supabase.instance.client;
   String? Mycar;
+  late dynamic data;
+  bool contextActionPerform = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,10 +37,12 @@ class _detailedReport4State extends State<detailedReport4> {
   Widget build(BuildContext context) {
     final ScreenHeight = MediaQuery.of(context).size.height;
     final ScreenWidth = MediaQuery.of(context).size.width;
-
-    dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    numberOfFields = data['Counter'];
-    _controllers = List.generate(numberOfFields, (index) => TextEditingController());
+    if (!contextActionPerform) {
+      data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      numberOfFields = data['Counter'];
+      _controllers = List.generate(numberOfFields, (index) => TextEditingController()); 
+      contextActionPerform = true;
+    }
     if(Mycar != null){
     _controllers[0].text =Mycar!;
     }
@@ -67,7 +72,6 @@ class _detailedReport4State extends State<detailedReport4> {
                       child: TextFormField(
                         controller: _controllers[index],
                         validator: (value){
-                          
                           if (value == null || value.isEmpty) {
                             return 'Please enter the car plate number';
                           }
@@ -79,7 +83,6 @@ class _detailedReport4State extends State<detailedReport4> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)
                           ),
-                          
                         ),
                       ),
                     );
@@ -89,29 +92,27 @@ class _detailedReport4State extends State<detailedReport4> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final uid = await supabase
+                try {
+                  final uid = await supabase
                     .from("User")
                     .select("IdNumber")
                     .eq("AuthID", aId)
                     .single();
-                
                 final response = await supabase
                     .from("Have")
                     .select("ChassisNumber")
                     .eq("IdNumber", uid["IdNumber"]);
-                
                 final List chassisNumbers = response.map((item) => item["ChassisNumber"]).toList();
-
+                print (chassisNumbers);
                 final carDetails = await Future.wait(
                   chassisNumbers.map((chassisNumber) async {
                     return await supabase
                         .from("Car")
-                        .select("*")
+                        .select("Manufacturer, Model, PlateNumber")
                         .eq("ChassisNumber", chassisNumber)
                         .single(); 
                   }).toList(),
                 );
-
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -129,15 +130,12 @@ class _detailedReport4State extends State<detailedReport4> {
                           itemCount: carDetails.length,
                           itemBuilder: (context, index) {
                             final car = carDetails[index];
-                             
-                        
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
                                   Mycar=car['PlateNumber'];
                                 });
                                 Navigator.of(context).pop();
-
                               },
                               child: Container(
                                 margin: EdgeInsets.symmetric(vertical: 3.0),
@@ -173,6 +171,10 @@ class _detailedReport4State extends State<detailedReport4> {
                   },
                   
                 );
+                }
+                catch(e){
+                  print ('Error retrieving your cars : $e');
+                }
               },
               child: Text("Show Cars"),
             ),
@@ -189,7 +191,6 @@ class _detailedReport4State extends State<detailedReport4> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()){
-
                       Navigator.pushNamed(context, '/DR5', arguments: <String, dynamic>{
                         'Lat' : data['Lat'],
                         'Long' : data['Long'],

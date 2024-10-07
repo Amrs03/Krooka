@@ -32,7 +32,7 @@ class _reportAccidentsState extends State<reportAccidents> {
                   onTap: (){
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AuthWrapper(child: detailedReport()))
+                      MaterialPageRoute(builder: (context) => AuthWrapper(child: mapsWidget()))
                     );
                   },
                   child: Container(

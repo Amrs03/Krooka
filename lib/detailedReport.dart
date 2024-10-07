@@ -5,12 +5,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
-class detailedReport extends StatefulWidget {
+class mapsWidget extends StatefulWidget {
   @override
-  _detailedReportState createState() => _detailedReportState();
+  _mapsWidgetState createState() => _mapsWidgetState();
 }
 
-class _detailedReportState extends State<detailedReport> {
+class _mapsWidgetState extends State<mapsWidget> {
   Completer<GoogleMapController> _controller = Completer();
   LatLng _currentPosition = LatLng(31.955162860469148, 35.91534546775252); // Default to San Francisco
   TextEditingController _locationController = TextEditingController();
@@ -115,6 +115,7 @@ class _detailedReportState extends State<detailedReport> {
       body: Stack(
         children: [
           GoogleMap(
+            zoomControlsEnabled: false,
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
               target: _currentPosition,
@@ -185,48 +186,63 @@ class _detailedReportState extends State<detailedReport> {
             ),
           ),
           Positioned(
-            bottom:10,
-            left: MediaQuery.of(context).size.width * 0.35,
-            right: MediaQuery.of(context).size.width * 0.35,
-            child: GestureDetector(
-              onTap: () {
-                print("Address :${_currentAddress.toString()}");
-                Navigator.pushNamed(context, '/DR2', arguments: <String, dynamic>{
-                  'lat' : _currentPosition.latitude,
-                  'long' : _currentPosition.longitude
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width:MediaQuery.sizeOf(context).width *0.2,
-                  height: MediaQuery.sizeOf(context).height *0.1,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1),
+            width: MediaQuery.of(context).size.width,
+            left: 0,
+            height: MediaQuery.of(context).size.height * 0.1,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              color: Colors.grey[300],
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      _getCurrentLocation();
+                    }, 
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.07,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      margin: EdgeInsets.only(right: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[500]
+                      ),
+                      child: Center(child: Icon(Icons.navigation)),
+                    ),
                   ),
-                  child: Center(
-                    child: Icon(Icons.room),
-                    // child: Text("Confirm",style: TextStyle(fontWeight: FontWeight.bold))
-                  ),
-                ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.pushNamed(context, '/DR2', arguments: <String, dynamic>{
+                          'lat' : _currentPosition.latitude,
+                          'long' : _currentPosition.longitude
+                        });
+                      },
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        width: MediaQuery.of(context).size.width * 0.65,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey[500]
+                        ),
+                        child: Center(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.15),
+                            iconColor: Colors.black,
+                            leading: Icon(Icons.near_me),
+                            title: Text('Confirm location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width * 0.04)),
+                          ),
+                        ),
+                      ),
+                    )
+                  )
+                  
+                ],
               ),
-            ),
+            )
           )
         ],
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 25),
-        child: FloatingActionButton(
-          onPressed: () {
-            _getCurrentLocation();
-          },
-          child: Icon(Icons.my_location),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
     );
   }
 }
