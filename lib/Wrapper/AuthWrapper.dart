@@ -6,6 +6,15 @@ class AuthWrapper extends StatelessWidget {
   final Widget child;
   const AuthWrapper({required this.child});
 
+  void dialog (context) {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: Text('Authentication required'),
+        content: Text('You have to be logged in to access the following feature'),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +31,7 @@ class AuthWrapper extends StatelessWidget {
               case AuthChangeEvent.signedIn:
                 return child; 
               default:
-                return SignInPage();
+                Future.delayed(Duration.zero, ()=>dialog(context));
             }
           }
           return SignInPage();

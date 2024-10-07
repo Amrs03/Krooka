@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'globalVariables.dart';
 import 'detailedReport.dart';
+import 'Wrapper/AuthWrapper.dart';
 
 
 class reportAccidents extends StatefulWidget {
@@ -31,7 +32,7 @@ class _reportAccidentsState extends State<reportAccidents> {
                   onTap: (){
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => detailedReport())
+                      MaterialPageRoute(builder: (context) => AuthWrapper(child: detailedReport()))
                     );
                   },
                   child: Container(

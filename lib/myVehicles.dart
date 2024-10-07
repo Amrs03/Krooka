@@ -549,7 +549,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                   ),
                                                   onPressed: () {
                                                     Navigator.push(context, 
-                                                    MaterialPageRoute(builder: (context) => PastAccidents(chassisNumber: carDetails['ChassisNumber'],)),
+                                                    MaterialPageRoute(builder: (context) => PastAccidents(plateNumber: carDetails['PlateNumber'],)),
                                                     );
                                                   },
                                                   child: Text(

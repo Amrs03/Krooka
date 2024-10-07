@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -81,11 +83,11 @@ class AppUser {
 }
 
 class Accident {
-
   late int AccidentID;
-  late String Location; //location will be saved as a google maps link
-  late int NumberOfCars;
-  late bool Injuries;
+  late double Latitude;
+  late double Longitude; //location will be saved as a google maps link
+  late String Status;
+  late String Date_Time;
 }
 
 class Car {

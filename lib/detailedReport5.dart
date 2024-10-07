@@ -127,8 +127,6 @@ class _detailedReport5State extends State<detailedReport5> {
                     try {
                       if (_images.isEmpty) {
                         _showSnackBar("Please upload the photos of the accident");
-                       
-                        
                       }
                       else {
                          _showSnackBar("Your report has been issued. Get to the side of the road.");
@@ -140,10 +138,9 @@ class _detailedReport5State extends State<detailedReport5> {
                           "latitude" : data['Lat'],
                           "longitude" : data['Long'],
                         }).select('AccidentID').single();
-
-
                         List plates = data['Plates'];
-                        plates.forEach((plate ) async{
+                        plates.forEach((plate) async{
+                          print (plate);
                           await supabase.from("Been In").insert({
                             "PlateNumber" : plate,
                             "AccidentID" : response['AccidentID'],
@@ -151,10 +148,7 @@ class _detailedReport5State extends State<detailedReport5> {
                             "Status" : "Pending",
                           });
                         });
-                      
                         await _uploadImagesToStorage(response["AccidentID"]);
-                        
-                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => MyHomePage()),

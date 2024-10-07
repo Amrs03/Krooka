@@ -36,7 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   AuthService _auth = AuthService();
-  int selectedIndex=0;
+  int selectedIndex = 0;
 
   //method to update the new selected index
   void navigateBottomBar(int index){
@@ -235,13 +235,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () async {
                                   // Proceed with sign out
                                   try {
-                                    await _auth.signOut();
-                                    print('AuthID : ${AuthService.authID}');
                                     setState(() {
                                       selectedIndex = 0;
                                     });
-                                    // Close the dialog after sign out
                                     Navigator.of(context).pop();
+                                    await _auth.signOut();
+                                    print('AuthID : ${AuthService.authID}');
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('Failed to sign out, please try again')),
