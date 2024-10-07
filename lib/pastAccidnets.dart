@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'globalVariables.dart';
 
@@ -40,7 +41,12 @@ class _PastAccidentsState extends State<PastAccidents> {
         Map AccInfo = await getAccidentInfo(result[i]['AccidentID']);
         acc.Longitude = AccInfo['longitude'];
         acc.Latitude = AccInfo['latitude'];
+
         acc.Date_Time = AccInfo['Date_Time']; 
+        List<Placemark> placemarks = await placemarkFromCoordinates(acc.Latitude, acc.Longitude);
+        Placemark place = placemarks[0];
+        acc.Location = "${place.subLocality} - ${place.thoroughfare}";
+
         accidents.add(acc);   
       }
       setState(() {});
@@ -52,6 +58,12 @@ class _PastAccidentsState extends State<PastAccidents> {
 
   Future<Map> getAccidentInfo (int ID) async {
     Map<String, dynamic> result = await supabase.from('Accident').select('latitude, longitude, Date_Time').eq('AccidentID', ID).single();
+    return result;
+  }
+  String getTime(BuildContext context, int index){
+    String result;
+    List time = DateTime.parse(accidents[index].Date_Time).toString().split('.').first.split(' ').last.split(':');
+    result = "${time[0]}:${time[1]}"; 
     return result;
   }
 
@@ -143,15 +155,36 @@ class _PastAccidentsState extends State<PastAccidents> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4.0, top:4.0),
-                        child: Text("Date & Time : ${DateTime.parse(accidents[index].Date_Time).toString().split('.').first}" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_month),
+                            Text(" ${DateTime.parse(accidents[index].Date_Time).toString().split('.').first.split(' ').first}" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                            Spacer(),
+                            Icon(Icons.access_time),
+                            Text(" ${getTime(context, index)}" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                            Spacer()
+                          ],
+                        ),
+                      ),
+                      
+                       Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+        
+                        child: Row(
+                          children: [
+                            Icon(Icons.room),
+                            Text(" ${accidents[index].Location}",style: TextStyle(fontSize: ScreenWidth*0.03),),
+                          ],
+                        ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text("Location : ${accidents[index].Latitude}   ${accidents[index].Longitude}",style: TextStyle(fontSize: ScreenWidth*0.03),),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text("Status : ${accidents[index].Status}",style: TextStyle(fontSize: ScreenWidth*0.03),),
+                        padding: const EdgeInsets.only(bottom: 4.0,),
+                        child: Row(
+                          children: [
+                            Icon(Icons.pending_outlined),
+                            Text(" ${accidents[index].Status}",style: TextStyle(fontSize: ScreenWidth*0.03,),),
+                          ],
+                        ),
                       ),
                     ],
                   ),
