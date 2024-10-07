@@ -88,6 +88,7 @@ class Accident {
   late double Longitude; //location will be saved as a google maps link
   late String Status;
   late String Date_Time;
+  late String Location;
 }
 
 class Car {
