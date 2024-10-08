@@ -87,10 +87,10 @@ class _detailedReport5State extends State<detailedReport5> {
                   onPressed: _pickImageFromCamera,
                   child: Text('Take Photo'),
                 ),
-                SizedBox(width: 20),
+                Spacer(),
                 ElevatedButton(
                   onPressed: _pickImageFromGallery,
-                  child: Text('Select from Gallery'),
+                  child: Text('From Gallery'),
                 ),
               ],
             ),

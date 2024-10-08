@@ -60,36 +60,6 @@ class _detailedReport4State extends State<detailedReport4> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               
             ),
-            SizedBox(height: 10),
-            Form(
-              key: _formKey,
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: numberOfFields,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: TextFormField(
-                        controller: _controllers[index],
-                        validator: (value){
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the car plate number';
-                          }
-                          _plates.add(value);
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Car ${index + 1} Plate Number',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -176,7 +146,39 @@ class _detailedReport4State extends State<detailedReport4> {
                   print ('Error retrieving your cars : $e');
                 }
               },
-              child: Text("Show Cars"),
+              child: Text("Select From My Cars"),
+            ),
+            
+            SizedBox(height: 10),
+            Form(
+              key: _formKey,
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: numberOfFields,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _controllers[index],
+                        validator: (value){
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the car plate number';
+                          }
+                          _plates.add(value);
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Car ${index + 1} Plate Number',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                
+              ),
             ),
             
             Row(

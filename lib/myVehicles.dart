@@ -122,6 +122,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                 width: ScreenWidth *0.75,
                 height: ScreenHeight*0.2,
                 margin: EdgeInsets.only(top:ScreenHeight *0.06),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
@@ -140,25 +141,41 @@ Future<void> _deleteCar(int chassisNumber) async {
                   children: [
                     
                     Column(
+                      
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 3.0),
-                          child: Text("Name : $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03),),
+                          padding: const EdgeInsets.only(bottom: 6.0,),
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_2_outlined),
+                              SizedBox(width:ScreenWidth*0.03),
+                              Text(" $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold),),
+                            ],
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 3.0),
-                          child: Text("Date Of Birth : $DoB",style: TextStyle(fontSize: ScreenWidth*0.03),),
+                          padding: const EdgeInsets.only(bottom: 6.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.cake_outlined),
+                              SizedBox(width:ScreenWidth*0.03),
+                              Text(" $DoB",style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold),),
+                            ],
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 3.0),
-                          child: Text("Phone Number : $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03),),
+                          padding: const EdgeInsets.only(bottom: 6.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.phone_outlined),
+                              SizedBox(width:ScreenWidth*0.03),
+                              Text(" $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03 , fontWeight: FontWeight.bold),),
+                            ],
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Text("Num. Of Accidents : " ,style: TextStyle(fontSize: ScreenWidth*0.03),),
-                        ),
+                       
                       ],
                     ),
                     
@@ -185,7 +202,6 @@ Future<void> _deleteCar(int chassisNumber) async {
                   child: CircleAvatar(
                     radius: ScreenWidth *0.11,
                     backgroundColor: Colors.white,
-                    
                     child:Icon(Icons.person_2 , size: ScreenWidth*0.15,color: Colors.black,)
                   ),
                 ),

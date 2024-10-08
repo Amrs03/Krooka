@@ -20,6 +20,8 @@ class _PastAccidentsState extends State<PastAccidents> {
   var carYear;
   var carColor;
   List <Accident> accidents = [];
+   bool isLoading = true;  // For managing loading state
+  String? errorMessage;   // For managing error state
 
   void _getCarDetails() async {
     final car = await supabase.from("Car").select().eq("PlateNumber", widget.plateNumber).single();
@@ -49,10 +51,14 @@ class _PastAccidentsState extends State<PastAccidents> {
 
         accidents.add(acc);   
       }
-      setState(() {});
+      accidents = accidents.reversed.toList();
+      setState(() {
+        isLoading = false;
+      });
     }
     catch(e) {
       print ('Error getting the accidents : $e');
+      isLoading = false;
     }
   }
 
@@ -77,6 +83,7 @@ class _PastAccidentsState extends State<PastAccidents> {
   Widget build(BuildContext context) {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Car History"),
@@ -93,7 +100,7 @@ class _PastAccidentsState extends State<PastAccidents> {
             ),
             child: Row(
               children: [
-                Icon(Icons.car_crash , size: ScreenWidth*0.2,),
+                Icon(Icons.directions_car , size: ScreenWidth*0.2,),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -129,13 +136,18 @@ class _PastAccidentsState extends State<PastAccidents> {
           ),
           Container(
             margin: EdgeInsets.only(left: 30, top: 6),
-            child: Text("Accidents ", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold),),
+            child: Text("Accidents (${accidents.length})", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold),),
           ),
+          isLoading ? Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator(),),
+          ) :
           ListView.builder(
             shrinkWrap: true,
             physics: ScrollPhysics(),
             itemCount: accidents.length,
             itemBuilder: (context, index) {
+              
               return Container(
                 height: ScreenHeight*0.2,
                 margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -151,7 +163,7 @@ class _PastAccidentsState extends State<PastAccidents> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Text("Accident ${index + 1}", style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: Text("Accident ${accidents.length -(index)}", style: TextStyle(fontWeight: FontWeight.bold),),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4.0, top:4.0),
