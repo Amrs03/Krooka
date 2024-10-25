@@ -11,10 +11,10 @@ import 'signInPage.dart';
 import 'Wrapper/AuthWrapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'detailedReport2.dart';
+import 'AcceptAccidentPage.dart';
 class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
- 
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -22,7 +22,8 @@ class homePage extends StatelessWidget {
         routes: {
           '/DR2' : (context) => detailedReport2(),
           '/DR4' : (context) => detailedReport4(),
-          '/DR5' : (context) => detailedReport5()
+          '/DR5' : (context) => detailedReport5(),
+          '/AcceptAccident' : (context) => acceptAccident()
         } ,
       ),
     );

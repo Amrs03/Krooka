@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'AcceptAccidentPage.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -24,6 +25,7 @@ class _OfficerPageState extends State<OfficerPage> {
   @override
   void initState() {
     super.initState();
+    loadAccident();
     _subscribeToAccidentUpdates();
     _startTimer(); // Start the timer to refresh "time ago" every minute
   }
@@ -41,22 +43,38 @@ class _OfficerPageState extends State<OfficerPage> {
     });
   }
 
-  void _subscribeToAccidentUpdates() {
-    supabase
-        .from('Accident')
-        .stream(primaryKey: ['AccidentID']) // Specify the primary key
-        .listen((List<Map<String, dynamic>> updates) {
-      _handleAccidentUpdates(updates);
-    });
+  void loadAccident () async {
+    try {
+      dynamic result  = await supabase.from('Accident').select().eq('Status', 'pending');
+      for (var accident in result) {
+        _handleAccidentUpdates(accident);
+      }
+      if (result.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+    catch(e) {
+      print ("Error getting the accident : $e");
+    }
   }
 
-   void _handleAccidentUpdates(List<Map<String, dynamic>> updates) async {
-  Position officerLocation = await _getOfficerLocation(); // Get the officer's location
+  void _subscribeToAccidentUpdates() {
+    supabase.channel('Accident').onPostgresChanges(
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: 'Accident',
+      callback: (payload) {
+        _handleAccidentUpdates(payload.newRecord);
+      },
+    ).subscribe();
+  }
 
-  for (var accident in updates) {
+   void _handleAccidentUpdates(Map <String,dynamic> accident) async {
+    Position officerLocation = await _getOfficerLocation(); // Get the officer's location
     double latitude = accident['latitude']; // Adjust key names as needed
     double longitude = accident['longitude']; // Adjust key names as needed
-
     // Calculate distance to the accident
     // double distanceInKm = _calculateDistance(
     //   officerLocation.latitude,
@@ -66,53 +84,36 @@ class _OfficerPageState extends State<OfficerPage> {
     // );
     // Check if the accident is within 20 km
     // if (distanceInKm <= 20 && accident['Status'] != 'in-progress') 
-
     if ( accident['Status'] == 'pending') {
       // Fetch sublocality for the accident location
       String sublocality = await _getSublocality(latitude, longitude);
       Map<String, String> distanceInfo = await _getDistanceAndTime(latitude, longitude, officerLocation.latitude, officerLocation.longitude);
 
       // Check if accident is already in the list
-      int index = pendingAccidents.indexWhere((a) => a['AccidentID'] == accident['AccidentID']);
-
-      if (index == -1) {
-        // If it's a new accident, add it to the list with sublocality
-        setState(() {
-          pendingAccidents.add({
-            ...accident,
-            'sublocality': sublocality,
-            'distance': distanceInfo['distance'],
-            'duration': distanceInfo['duration'],
-            'duration_in_traffic': distanceInfo['duration_in_traffic'],
-          });
+      // If it's a new accident, add it to the list with sublocality
+      setState(() {
+        pendingAccidents.add({
+          ...accident,
+          'sublocality': sublocality,
+          'distance': distanceInfo['distance'],
+          'duration': distanceInfo['duration'],
+          'duration_in_traffic': distanceInfo['duration_in_traffic'],
         });
-      } else {
-        // If the accident already exists, update its details
-        setState(() {
-          pendingAccidents[index] = {
-            ...accident,
-            'sublocality': sublocality,
-            'distance': distanceInfo['distance'],
-            'duration': distanceInfo['duration'],
-            'duration_in_traffic': distanceInfo['duration_in_traffic'],
-          };
-        });
-      }
+      });
     }
-  }
-
+    else {
+      pendingAccidents.removeWhere((accidentz) => accidentz['AccidentID'] == accident['AccidentID']);
+    }
   // After all updates, sort the list by Date_Time to ensure newest accidents are on top
-  setState(() {
-    pendingAccidents.sort((a, b) {
-      DateTime dateA = DateTime.parse(a['Date_Time']);
-      DateTime dateB = DateTime.parse(b['Date_Time']);
-      return dateB.compareTo(dateA); // Sort newest first
+    setState(() {
+      pendingAccidents.sort((a, b) {
+        DateTime dateA = DateTime.parse(a['Date_Time']);
+        DateTime dateB = DateTime.parse(b['Date_Time']);
+        return dateB.compareTo(dateA); // Sort newest first
+      });
+      _isLoading = false;
     });
-    _isLoading = false;
-  });
-
-}
-
+  }
 // Haversine formula to calculate distance between two lat/lng points
 double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
   const int radius = 6371; // Radius of the Earth in kilometers
@@ -347,8 +348,21 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                           ),
                         ),
                         GestureDetector(
-                          onTap: (){
-                            _acceptAccident(accident['AccidentID']);
+                          onTap: () async {
+                            try {
+                              await supabase
+                                .from('Accident')
+                                .update({'Status': 'in-progress'})
+                                .eq('AccidentID', accident['AccidentID']);
+                              Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
+                                'ID' : accident['AccidentID'],
+                                'lat' : accident['latitude'],
+                                'long' : accident ['longitude']
+                              });
+                            }
+                            catch(e) {
+                              print ('Error accepting the accident : $e');
+                            }
                           },
                           child: Container(
                             width: ScreenWidth*.2,
@@ -371,24 +385,6 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                 );
               },
             ),
-    );
-  }
-
-  void _acceptAccident(int accidentId) async {
-    // Optimistically update the UI
-    setState(() {
-      // Remove the accepted accident from the list
-      pendingAccidents.removeWhere((accident) => accident['AccidentID'] == accidentId);
-    });
-
-    // Perform the actual update
-    await supabase
-        .from('Accident')
-        .update({'Status': 'in-progress'})
-        .eq('AccidentID', accidentId);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Accident accepted and is now in-progress!')),
     );
   }
 }

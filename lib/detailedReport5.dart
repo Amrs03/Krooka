@@ -43,10 +43,11 @@ class _detailedReport5State extends State<detailedReport5> {
   
         Uint8List fileBytes = await _images[i].readAsBytes();
         String filePath = 'user-uploads/$id-${i+1}';
+        String signedUrl = await bucket.createSignedUrl(filePath, 604800);
         await bucket.uploadBinary(filePath, fileBytes, fileOptions: FileOptions(contentType: 'image/jpeg'));
         await supabase.from("Accident_Photos").insert({
           "accidentId" : id,
-          "filePath" : filePath,
+          "filePath" : signedUrl,
         });
       }
     }
