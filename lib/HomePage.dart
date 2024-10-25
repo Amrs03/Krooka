@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:krooka/OfficerPage.dart';
 import 'package:krooka/detailedReport4.dart';
 import 'package:krooka/detailedReport5.dart';
 import 'myVehicles.dart';
@@ -157,6 +158,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
                 ),
                 GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OfficerPage()),
+                    );
+                  },
                   child: Container(
                     height: ScreenHeight*0.18,
                     width: ScreenWidth*0.42,
