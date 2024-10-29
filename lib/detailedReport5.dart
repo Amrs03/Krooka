@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krooka/HomePage.dart';
+import 'package:krooka/globalVariables.dart';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -40,11 +41,10 @@ class _detailedReport5State extends State<detailedReport5> {
   Future<void> _uploadImagesToStorage (int id) async {
     try {
       for (int i = 0; i < _images.length; i++){
-  
         Uint8List fileBytes = await _images[i].readAsBytes();
         String filePath = 'user-uploads/$id-${i+1}';
-        String signedUrl = await bucket.createSignedUrl(filePath, 604800);
         await bucket.uploadBinary(filePath, fileBytes, fileOptions: FileOptions(contentType: 'image/jpeg'));
+        String signedUrl = await bucket.createSignedUrl(filePath, 604800);
         await supabase.from("Accident_Photos").insert({
           "accidentId" : id,
           "filePath" : signedUrl,
@@ -132,11 +132,13 @@ class _detailedReport5State extends State<detailedReport5> {
                          _showSnackBar("Your report has been issued. Get to the side of the road.");
                         dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
                         print (data);
+                        dynamic userID = await supabase.from('User').select('IdNumber').eq('AuthID', AuthService.authID!).single();
                         final response = await supabase.from('Accident').insert({
                           "Injuries" : data['Inj'] == 'Yes' ? true : false,
                           "NumberOfCars" : data['Plates'].length,
                           "latitude" : data['Lat'],
                           "longitude" : data['Long'],
+                          "applicantID" : userID['IdNumber']
                         }).select('AccidentID').single();
                         List plates = data['Plates'];
                         plates.forEach((plate) async{

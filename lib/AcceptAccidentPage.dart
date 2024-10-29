@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class acceptAccident extends StatefulWidget {
-  const acceptAccident({super.key});
+  final Map<String, dynamic> data;
+
+  const acceptAccident({required this.data});
 
   @override
   State<acceptAccident> createState() => _acceptAccidentState();
 }
 
 class _acceptAccidentState extends State<acceptAccident> {
-  List<File> _images = [];
-  final bucket = Supabase.instance.client.storage.from('accident-images');
-  final SupabaseClient supabase = Supabase.instance.client;
+  List<String> _images = [];
+  final SupabaseClient supabase = Supabase.instance.client; 
   bool contextActionPerform = false;
+
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    // getPhotos(widget.data['ID']);
   }
 
   Future<void> getPhotos (int accidentID) async {
     try {
       dynamic result = await supabase.from('Accident_Photos').select('filePath').eq('accidentId', accidentID);
-      print (result);
+      result.forEach((url) {
+        _images.add(url['filePath']);
+      });
+      // setState(() {});
     }
     catch(e) {
       print ('Error retrieving photos : $e');
@@ -48,36 +54,73 @@ class _acceptAccidentState extends State<acceptAccident> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _images.clear();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    dynamic data = ModalRoute.of(context)!.settings.arguments;
-    if (!contextActionPerform) {
-      
-    }
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Accept accident ${data['ID']}'),
+        title: Text('Accept accident ${widget.data['ID']}'),
       ),
       body: Column(
         children: [
           ElevatedButton(
             onPressed: (){
-              OpenGoogleMaps(data['lat'], data['long']);
+              OpenGoogleMaps(widget.data['lat'], widget.data['long']);
             },
             child: Text('Go to location')
           ),
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+          Expanded(
+            child: FutureBuilder(
+              future: getPhotos(widget.data['ID']),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    width: ScreenWidth * 0.8,
+                    margin: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Container(
+                    width: ScreenWidth * 0.8,
+                    margin: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Center(
+                      child: Text("Error: ${snapshot.error}"),
+                    ),
+                  );
+                } else {
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: _images.length,
+                    itemBuilder: (context, index) {
+                      return Image.network(
+                        _images[index],
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  );
+                }
+              },
             ),
-            itemCount: _images.length,
-            itemBuilder: (context, index) {
-              return Image.file(
-                _images[index],
-                fit: BoxFit.cover,
-              );
-            },
           ),
         ],
       ),

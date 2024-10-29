@@ -23,7 +23,10 @@ class homePage extends StatelessWidget {
           '/DR2' : (context) => detailedReport2(),
           '/DR4' : (context) => detailedReport4(),
           '/DR5' : (context) => detailedReport5(),
-          '/AcceptAccident' : (context) => acceptAccident()
+          '/AcceptAccident' : (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return acceptAccident(data: args); // Pass arguments to NewRoute
+          }
         } ,
       ),
     );
