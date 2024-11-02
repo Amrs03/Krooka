@@ -49,29 +49,19 @@ class _acceptAccidentState extends State<acceptAccident> {
   List<String> _images = [];
   final SupabaseClient supabase = Supabase.instance.client; 
   bool contextActionPerform = false;
-
+  List<String> _plates =[];
+  Map<String,dynamic> applicantInfo = {};
 
   @override
   void initState() {
     super.initState();
     // getPhotos(widget.data['ID']);
+    //getPlates(widget.data['ID']);
+    getApplicantInfo(widget.data['ID']);
+
   }
 
-  Future<void> getPhotos (int accidentID) async {
-    try {
-      if (_images.isNotEmpty) {
-        return;
-      }
-      dynamic result = await supabase.from('Accident_Photos').select('filePath').eq('accidentId', accidentID);
-      result.forEach((url) {
-        _images.add(url['filePath']);
-      });
-      // setState(() {});
-    }
-    catch(e) {
-      print ('Error retrieving photos : $e');
-    }
-  }
+
 
   Future<void> OpenGoogleMaps (double lat, double long) async {
     try {
@@ -87,6 +77,44 @@ class _acceptAccidentState extends State<acceptAccident> {
       print ('Cant open google maps : $e');
     }
   }
+
+  Future<void> getPlates (int accidentID) async{
+    try{
+       if (_plates.isNotEmpty) {
+        return;
+      }
+      dynamic plates =[];
+      plates = await supabase.from("Been In").select("PlateNumber").eq('AccidentID', accidentID);
+      plates.forEach((plate) {
+        _plates.add(plate['PlateNumber']);
+      });
+    }
+    catch(e){
+      print("error: ${e.toString()}");
+    }
+  }
+
+  Future<void> getApplicantInfo(int accidentId) async{
+    try{
+      dynamic ApplicantId;
+      ApplicantId = await supabase.from('Accident').select('applicantID').eq('AccidentID', accidentId).single();
+      print(ApplicantId);
+      dynamic result;
+      result= await supabase.from("User").select('FirstName, LastName, PhoneNum').eq("IdNumber", ApplicantId['applicantID']).single();
+      print(result['FirstName']);
+      applicantInfo['FirstName'] = result['FirstName'];
+      applicantInfo['LastName'] = result['LastName'];
+      applicantInfo['PhoneNum'] = result['PhoneNum'];
+      setState(() {
+        
+      });
+    }
+    catch(e){
+      print("Error : ${e.toString()}");
+    }
+  }
+
+
 
   @override
   void dispose() {
@@ -129,9 +157,11 @@ class _acceptAccidentState extends State<acceptAccident> {
             ),
           ),
           SizedBox(height: 20),
-          Expanded(
+            Expanded(
             child: FutureBuilder(
-              future: getPhotos(widget.data['ID']),
+              future: Future.wait([
+                getPlates(widget.data['ID']),
+              ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
@@ -158,65 +188,78 @@ class _acceptAccidentState extends State<acceptAccident> {
                     ),
                   );
                 } else {
+                  // Assuming _images and _plateNumbers are defined and populated in getPhotos and getPlates
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.1),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: _images.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
+                    padding: EdgeInsets.symmetric(horizontal: ScreenWidth * 0.1),
+                    child: Column(
+                      children:[
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _plates.length, // Assuming _plateNumbers is defined
+                            itemBuilder: (context, index) {
+                              return Container(
+                                padding: EdgeInsets.all(8),
+                                margin: EdgeInsets.symmetric(horizontal: 5 , vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(width: 1 ,color: Colors.black)
+                                ),
+                                child: Text(
+                                  _plates[index],
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              );
+                            },
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: (){
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => PhotoDialog(photoUrl: _images[index])
-                                );
-                              },
-                              child: Hero(
-                                tag: _images[index], 
-                                child: Image.network(
-                                  _images[index],
-                                  fit:BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded /
-                                                loadingProgress.expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Icon(Icons.error, color: Colors.red),
-                                    );
-                                  }
-                                )
-                              )
-                            ),
-                          ),
-                        );
-                      },
+                        ),
+                        SizedBox(height: 10),
+                        // Display Photos
+                      ],
                     ),
                   );
                 }
               },
             ),
           ),
+          SizedBox(height: 10),
+          Container(
+            width: ScreenWidth*1,
+             height: ScreenHeight*0.18,
+             decoration: BoxDecoration(
+               color: Colors.grey[200],
+               borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))
+             ),
+             child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width:5),
+                    Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']} "),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.phone),
+                    SizedBox(width: 5,),
+                    Text("${applicantInfo['PhoneNum']}")
+                  ],
+                ),
+                Spacer(),
+                Container(
+                  width: ScreenWidth*0.8,
+                  height: ScreenHeight*0.08,
+                  decoration: BoxDecoration(
+                    color:Colors.black,
+                    borderRadius: BorderRadius.circular(15)
+                  ),
+                  child: Text("Done"),
+                )
+              ],
+             ),
+           ),
+           
         ],
       ),
     );
