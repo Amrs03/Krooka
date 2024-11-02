@@ -1,13 +1,16 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
 
 class PhotoDialog extends StatelessWidget {
-  final String photoUrl;
+  final Uint8List photoBytes;
 
-  const PhotoDialog({required this.photoUrl});
+  const PhotoDialog({required this.photoBytes});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +26,9 @@ class PhotoDialog extends StatelessWidget {
             maxHeight: ScreenHeight*0.6,
             maxWidth: ScreenWidth*0.9
           ),
-          child: Hero(
-            tag: photoUrl,
-            child: Image.network(
-              photoUrl,
-              fit: BoxFit.contain,
-            ),
+          child: Image.memory(
+            photoBytes,
+            fit: BoxFit.contain,
           ),
         ),
       ),
@@ -46,27 +46,33 @@ class acceptAccident extends StatefulWidget {
 }
 
 class _acceptAccidentState extends State<acceptAccident> {
-  List<String> _images = [];
+  List<Uint8List> imageBytes = [];
   final SupabaseClient supabase = Supabase.instance.client; 
-  bool contextActionPerform = false;
+  bool done = false;
 
 
   @override
   void initState() {
     super.initState();
-    // getPhotos(widget.data['ID']);
+    getPhotos(widget.data['ID']);
   }
 
   Future<void> getPhotos (int accidentID) async {
     try {
-      if (_images.isNotEmpty) {
+      if (imageBytes.isNotEmpty){
         return;
       }
       dynamic result = await supabase.from('Accident_Photos').select('filePath').eq('accidentId', accidentID);
-      result.forEach((url) {
-        _images.add(url['filePath']);
-      });
-      // setState(() {});
+      for (int i =0; i < result.length; i++){
+        final response = await http.get(Uri.parse(result[i]['filePath']));
+        if (response.statusCode == 200){
+          imageBytes.add(response.bodyBytes);
+        }
+        else {
+          throw Exception('http request failed :(');
+        }
+      }
+      setState(() {done = true;});
     }
     catch(e) {
       print ('Error retrieving photos : $e');
@@ -92,7 +98,6 @@ class _acceptAccidentState extends State<acceptAccident> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _images.clear();
   }
 
   @override
@@ -104,9 +109,11 @@ class _acceptAccidentState extends State<acceptAccident> {
         children: [
           SizedBox(height: ScreenHeight*0.05),
           GestureDetector(
-            // onTap: (){},
+            onTap: (){
+              OpenGoogleMaps(widget.data['lat'], widget.data['long']);
+            },
             child: Container(
-              width: ScreenWidth*0.8,
+              width: ScreenWidth*0.9,
               height: ScreenHeight *0.075,
               decoration: BoxDecoration(
                 border: Border.all(
@@ -130,93 +137,31 @@ class _acceptAccidentState extends State<acceptAccident> {
           ),
           SizedBox(height: 20),
           Expanded(
-            child: FutureBuilder(
-              future: getPhotos(widget.data['ID']),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    width: ScreenWidth * 0.8,
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Container(
-                    width: ScreenWidth * 0.8,
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Center(
-                      child: Text("Error: ${snapshot.error}"),
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.1),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: _images.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: (){
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => PhotoDialog(photoUrl: _images[index])
-                                );
-                              },
-                              child: Hero(
-                                tag: _images[index], 
-                                child: Image.network(
-                                  _images[index],
-                                  fit:BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded /
-                                                loadingProgress.expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Icon(Icons.error, color: Colors.red),
-                                    );
-                                  }
-                                )
-                              )
-                            ),
-                          ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.05),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10
+                ),
+                itemCount: widget.data['NumOfPhotos'],
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap:() {
+                      if (done){
+                        showDialog(
+                          context: context, 
+                          builder:(context) => PhotoDialog(photoBytes:  imageBytes[index])
                         );
-                      },
-                    ),
+                      }
+                    },
+                    child: done ? Image.memory(imageBytes[index], fit: BoxFit.cover): Center(child: CircularProgressIndicator())
                   );
                 }
-              },
+              ),
             ),
-          ),
+          ) 
         ],
       ),
     );

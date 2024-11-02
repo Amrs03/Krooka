@@ -350,14 +350,16 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                         GestureDetector(
                           onTap: () async {
                             try {
-                              await supabase
-                                .from('Accident')
-                                .update({'Status': 'in-progress'})
-                                .eq('AccidentID', accident['AccidentID']);
+                              // await supabase
+                              //   .from('Accident')
+                              //   .update({'Status': 'in-progress'})
+                              //   .eq('AccidentID', accident['AccidentID']);
+                              dynamic query = await supabase.from('Accident_Photos').select().eq('accidentId', accident['AccidentID']);
                               Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
                                 'ID' : accident['AccidentID'],
                                 'lat' : accident['latitude'],
-                                'long' : accident ['longitude']
+                                'long' : accident ['longitude'],
+                                'NumOfPhotos' : query.length
                               });
                             }
                             catch(e) {
