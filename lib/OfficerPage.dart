@@ -354,7 +354,7 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                                 .from('Accident')
                                 .update({'Status': 'in-progress'})
                                 .eq('AccidentID', accident['AccidentID']);
-                              Navigator.pushNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
+                              Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
                                 'ID' : accident['AccidentID'],
                                 'lat' : accident['latitude'],
                                 'long' : accident ['longitude']
