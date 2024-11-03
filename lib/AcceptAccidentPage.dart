@@ -129,6 +129,18 @@ class _acceptAccidentState extends State<acceptAccident> {
     }
   }
 
+  Future<void> _makePhoneCall(String phoneNumber) async{
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber
+      );
+     if (await canLaunchUrl(launchUri)) {
+    await launchUrl(launchUri);
+  } else {
+    throw 'Could not launch $launchUri';
+  }
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -172,10 +184,11 @@ class _acceptAccidentState extends State<acceptAccident> {
           ),
           SizedBox(height: 20),
           Container(
-            height: ScreenHeight * 0.3,
+            //height: ScreenHeight * 0.3,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.05),
               child: GridView.builder(
+                shrinkWrap: true, // Allows the GridView to size itself based on its content
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 10,
@@ -198,6 +211,7 @@ class _acceptAccidentState extends State<acceptAccident> {
               ),
             ),
           ),
+          SizedBox(height: 10,),
           Expanded(
             child: FutureBuilder(
               future: Future.wait([
@@ -266,25 +280,26 @@ class _acceptAccidentState extends State<acceptAccident> {
           Container(
             width: ScreenWidth*1,
             height: ScreenHeight*0.18,
-            padding: EdgeInsets.symmetric(vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: ScreenWidth*0.02, vertical: 5),
+            padding: EdgeInsets.only(top: 10 , bottom: 2),
+            margin: EdgeInsets.only(right: ScreenWidth*0.003,left: ScreenWidth*0.003 ,top: 2),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-              border: Border.all(
-                width: 2,
-                color: Colors.black
+              border: Border(
+                 top: BorderSide(color: Colors.black, width: 2.0),
+                  left: BorderSide(color: Colors.black, width: 2.0),
+                 right: BorderSide(color: Colors.black, width: 2.0),
               )
             ),
              child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      width: ScreenWidth*0.4,
+                      padding: EdgeInsets.symmetric(horizontal: 4),
                       height: ScreenHeight *0.065,
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black,
@@ -298,46 +313,51 @@ class _acceptAccidentState extends State<acceptAccident> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.person),
-                            SizedBox(width:5),
+                            SizedBox(width:3),
                             Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']} "),
                           ],
                         )
                       ),
                     ),
-                    SizedBox(width: ScreenWidth*0.1),
-                    Container(
-                      width: ScreenWidth*0.4,
-                      height: ScreenHeight *0.065,
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 2
+                    GestureDetector(
+                      onTap: () {
+                        _makePhoneCall(applicantInfo['PhoneNum']);
+                        print("test");
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        height: ScreenHeight *0.065,
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey[200]
                         ),
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey[200]
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.phone),
-                            SizedBox(width: 5,),
-                            Text("${applicantInfo['PhoneNum']}")
-                          ],
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.phone),
+                              SizedBox(width: 5,),
+                              Text("${applicantInfo['PhoneNum']}")
+                            ],
+                          ),
                         ),
                       ),
                     )
                   ],
                 ),
-                Spacer(),
                 GestureDetector(
                   onTap: (){
                     // OpenGoogleMaps(widget.data['lat'], widget.data['long']);
+        
                   },
                   child: Container(
                     width: ScreenWidth*0.9,
-                    height: ScreenHeight *0.065,
+                    height: ScreenHeight *0.07,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.black,
