@@ -354,6 +354,10 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                               //   .from('Accident')
                               //   .update({'Status': 'in-progress'})
                               //   .eq('AccidentID', accident['AccidentID']);
+                              await supabase
+                                .from('Accident')
+                                .update({'OfficerID': '9876543210'})
+                                .eq('AccidentID', accident['AccidentID']);
                               dynamic query = await supabase.from('Accident_Photos').select().eq('accidentId', accident['AccidentID']);
                               Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
                                 'ID' : accident['AccidentID'],

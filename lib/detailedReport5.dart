@@ -151,10 +151,11 @@ class _detailedReport5State extends State<detailedReport5> {
                           });
                         });
                         await _uploadImagesToStorage(response["AccidentID"]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyHomePage()),
-                        );
+                        Navigator.pushNamed(context, '/InProgress', arguments: <String, dynamic>{
+                          'Lat' : data['Lat'],
+                          'Long' : data['Long'],
+                          'ID' : response["AccidentID"]
+                        });
                       }
                     }
                     catch(e){

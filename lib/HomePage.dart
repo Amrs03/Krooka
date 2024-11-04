@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:krooka/AccidentInProgress.dart';
 import 'package:krooka/OfficerPage.dart';
 import 'package:krooka/detailedReport4.dart';
 import 'package:krooka/detailedReport5.dart';
@@ -18,11 +19,15 @@ class homePage extends StatelessWidget {
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: MyHomePage(),
+        home:InProgress(data: {'Lat' : 32.0041678, 'Long' : 35.8794266, 'ID' : 74}),
         routes: {
           '/DR2' : (context) => detailedReport2(),
           '/DR4' : (context) => detailedReport4(),
           '/DR5' : (context) => detailedReport5(),
+          'InProgress' : (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
+            return InProgress(data: args);
+          },
           '/AcceptAccident' : (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return acceptAccident(data: args); // Pass arguments to NewRoute

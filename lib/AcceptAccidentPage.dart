@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:typed_data';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class PhotoDialog extends StatelessWidget {
   final Uint8List photoBytes;
@@ -49,13 +53,62 @@ class _acceptAccidentState extends State<acceptAccident> {
   bool done = false;
   List<String> _plates =[];
   Map<String,dynamic> applicantInfo = {};
-
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _locationPermission();
     getPhotos(widget.data['ID']);
     getApplicantInfo(widget.data['ID']);
+    startTimer();
+  }
+
+  Future<void> _locationPermission() async {
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Please enable the location on your phone');
+      }
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Please allow the app to use the location of your device');
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Please allow the app to use the location of your device, by changing the permission rules in the settings -> apps');
+      }
+    }
+    catch(e) {
+      print('Can\'t get the current location : $e');
+      Navigator.pop(context);
+    }
+  }
+
+  void startTimer () async {
+    _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+      await _saveCurrentLocation();
+    });
+  }
+
+  Future<void> _saveCurrentLocation() async {
+    try {
+      print ('Updating the location ...');
+      Position position = await Geolocator.getCurrentPosition();
+      await supabase
+        .from('Officer')
+        .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
+        .eq('OfficerID', '9876543210');
+      print ('Location has been updated \n :)');
+    }
+    catch(e) {
+      print('Can\'t get the current location : $e');
+      Navigator.pop(context);
+    }
   }
 
   Future<void> getPhotos (int accidentID) async {
