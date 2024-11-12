@@ -100,117 +100,106 @@ Future<void> _deleteCar(int chassisNumber) async {
       backgroundColor: Colors.grey[100],
       body: ListView(
         children: [
+        
           Container(
-            padding: EdgeInsets.only(top: 7, bottom: 3),
-            height: ScreenHeight *0.05,
-            color: const Color.fromARGB(255, 248, 200, 57),
-            child: Center(
-              child: Text("Profile" ,style: TextStyle(fontWeight: FontWeight.bold),),
+            height: ScreenHeight * 0.22,
+            decoration: BoxDecoration(
+              color: Color(0xFFF5F5FA),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(25), 
+                bottomRight: Radius.circular(25),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2), // Shadow color with opacity
+                  spreadRadius: 2,                      // Spread radius
+                  blurRadius: 8,                        // Blur radius
+                  offset: Offset(0, 4),                 // Horizontal & Vertical offset (0 for x, positive for downward y)
+                ),
+              ],
             ),
-          ),
-          Stack(
-            children:[
-              Container(
-                height: ScreenHeight*0.17,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 248, 200, 57),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25))
-                ),
-              )
-              ,Center(
-                child: Container(
-                width: ScreenWidth *0.75,
-                height: ScreenHeight*0.2,
-                margin: EdgeInsets.only(top:ScreenHeight *0.06),
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: const Color.fromARGB(255, 255, 192, 3), width: 2),
-                  boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
-                    spreadRadius: 5, // How much the shadow spreads
-                    blurRadius: 10, // Smoothens the edges of the shadow
-                    offset: Offset(0, 5), // Horizontal and vertical shadow offset
-                  ),
-                ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    
-                    Column(
-                      
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6.0,),
-                          child: Row(
-                            children: [
-                              Icon(Icons.person_2_outlined),
-                              SizedBox(width:ScreenWidth*0.03),
-                              Text(" $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.cake_outlined),
-                              SizedBox(width:ScreenWidth*0.03),
-                              Text(" $DoB",style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.phone_outlined),
-                              SizedBox(width:ScreenWidth*0.03),
-                              Text(" $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03 , fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ),
-                       
-                      ],
+            child: Padding(
+              padding: const EdgeInsets.only(top: 25.0),
+              child: Row(
+                crossAxisAlignment:CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                   Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Color(0xFF0A061F) , width: 6),
                     ),
-                    
-                  ],
-                ),
-                
-                            ),
+                    child: CircleAvatar(
+                      radius: ScreenWidth *0.11,
+                      backgroundColor: Colors.white,
+                      child:Icon(Icons.person_2 , size: ScreenWidth*0.2,color: Color(0xFF0A061F),)
+                    ),
+                    ),
+              
+              Container(
+              width: ScreenWidth *0.66,
+              height: ScreenHeight*0.15,
+              padding: EdgeInsets.symmetric(vertical: 4 , horizontal: 20),
+              decoration: BoxDecoration(
+                color: Color(0xFF0A061F),
+                borderRadius: BorderRadius.circular(15),
               ),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color:  const Color.fromARGB(255, 255, 192, 3) , width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
-                        spreadRadius: 2, // How much the shadow spreads
-                        blurRadius: 10, // Smoothens the edges of the shadow
-                        offset: Offset(0, -5), // Horizontal and vertical shadow offset
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6.0,),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person_2_outlined ,  color: Colors.white),
+                            SizedBox(width:ScreenWidth*0.03),
+                            Text(" $FirstName $LastName" , style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold, color: Colors.white),),
+                          ],
+                        ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.cake_outlined ,  color: Colors.white),
+                            SizedBox(width:ScreenWidth*0.03),
+                            Text(" $DoB",style: TextStyle(fontSize: ScreenWidth*0.03 ,fontWeight: FontWeight.bold , color: Colors.white),),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.phone_outlined ,color: Colors.white,),
+                            SizedBox(width:ScreenWidth*0.03),
+                            Text(" $PhoneNumber" ,style: TextStyle(fontSize: ScreenWidth*0.03 , fontWeight: FontWeight.bold, color: Colors.white),),
+                          ],
+                        ),
+                      ),
+                     
                     ],
+                  ),
                   
-                  ),
-                  child: CircleAvatar(
-                    radius: ScreenWidth *0.11,
-                    backgroundColor: Colors.white,
-                    child:Icon(Icons.person_2 , size: ScreenWidth*0.15,color: Colors.black,)
-                  ),
-                ),
+                ],
               ),
-            ]
-          ),
+              
+                          ),
+                ],
+              ),
+            ),
+          )
+          ,
+           
+       
+          
           Container(
-            margin: EdgeInsets.only(left: 30, top: 15),
-            child: Text("My Cars ", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold),),
+            margin: EdgeInsets.only(left: 30, top: 20),
+            child: Text("My Vehicles ", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold, color: Color(0xFF0A061F)),),
           ),
 
           
@@ -228,25 +217,25 @@ Future<void> _deleteCar(int chassisNumber) async {
                         final cars = carSnapshot.data!;
                         return ListView.builder(
                           itemCount: cars.length + 1,
-                          scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
                             if (index == cars.length) {
                               return Container(
+                                height: ScreenHeight*0.23,
                                 width: ScreenWidth * 0.8,
                                 margin: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(25),
+                                  borderRadius: BorderRadius.circular(15),
+                                  
                                 ),
                                 child: Center(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Text(
                                         "Add a Car",
                                         style: TextStyle(fontSize: 20, color: Colors.grey[500]),
                                       ),
-                                      SizedBox(height: 30),
                                       Container(
                                         padding: EdgeInsets.all(5),
                                         decoration: BoxDecoration(
@@ -264,7 +253,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                                           },
                                           child: Icon(
                                             Icons.add,
-                                            size: 50,
+                                            size: 40,
                                             color: Colors.grey[600],
                                           ),
                                         ),
@@ -306,14 +295,13 @@ Future<void> _deleteCar(int chassisNumber) async {
                                   } else {
                                     final carDetails = carDetailSnapshot.data!;
                                     return Container(
-                                      padding: EdgeInsets.all(10),
-                                      width: ScreenWidth * 0.8,
-                                      height: ScreenHeight * 0.5,
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      width: ScreenWidth * 0.9,
                                       margin: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
-                                        border: Border.all(color: const Color.fromARGB(255, 255, 192, 3), width: 2 ),
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(color: Color(0xFF0A061F), width: 2 ),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.black.withOpacity(0.2), // Slightly transparent shadow
@@ -326,241 +314,87 @@ Future<void> _deleteCar(int chassisNumber) async {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Center(
-                                            child: Text(
-                                              "Car ${index + 1}",
-                                              style: TextStyle(fontSize: ScreenWidth * 0.05, fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          SizedBox(height: ScreenHeight * 0.01),
-                                          Padding(
-                                            padding: const EdgeInsets.all(9.0),
-                                            child: Row(
-                                              //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  "Manufacturer:\u00A0",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
-                                                      shadows: [
-                                                        Shadow(
-                                                          offset: Offset(-1, -1),
-                                                          color: Colors.black, // Black shadow on the top-left
-                                                          blurRadius: 1.5,
-                                                        ),
-                                                        Shadow(
-                                                          offset: Offset(1, -1),
-                                                          color: Colors.black, // Black shadow on the top-right
-                                                          blurRadius: 1.5,
-                                                        ),
-                                                        Shadow(
-                                                          offset: Offset(1, 1),
-                                                          color: Colors.black, // Black shadow on the bottom-right
-                                                          blurRadius: 1.5,
-                                                          
-                                                        ),
-                                                          Shadow(
-                                                            offset: Offset(-1, 1),
-                                                            color: Colors.black, // Black shadow on the bottom-left
-                                                            blurRadius: 1.5,
-                                                          ),
-                                                        ]
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  carDetails["Manufacturer"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.045 ,),
-                                                ),
-                                                Spacer()
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(9.0),
-                                            child: Row(
-                                              //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  "Model: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035,color: Colors.white,
-                                                    shadows: [
-                                                      Shadow(
-                                                        offset: Offset(-1, -1),
-                                                        color: Colors.black, // Black shadow on the top-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, -1),
-                                                        color: Colors.black, // Black shadow on the top-right
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-right
-                                                        blurRadius: 1.5,
-                                                        
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(-1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                    ]
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  carDetails["Model"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
-                                                ),
-                                                Spacer(),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(9.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  "Year: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
-                                                    shadows: [
-                                                      Shadow(
-                                                        offset: Offset(-1, -1),
-                                                        color: Colors.black, // Black shadow on the top-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, -1),
-                                                        color: Colors.black, // Black shadow on the top-right
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-right
-                                                        blurRadius: 1.5,
-                                                        
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(-1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                    ]
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  carDetails["Year"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
-                                                ),
-                                                Spacer(),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(9.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  "Color: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
-                                                    shadows: [
-                                                      Shadow(
-                                                        offset: Offset(-1, -1),
-                                                        color: Colors.black, // Black shadow on the top-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, -1),
-                                                        color: Colors.black, // Black shadow on the top-right
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-right
-                                                        blurRadius: 1.5,
-                                                        
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(-1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                    ]
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  carDetails["Color"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
-                                                ),
-                                                Spacer(),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(9.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  "Plate Number: ",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.035, color: Colors.white,
-                                                    shadows: [
-                                                      Shadow(
-                                                        offset: Offset(-1, -1),
-                                                        color: Colors.black, // Black shadow on the top-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, -1),
-                                                        color: Colors.black, // Black shadow on the top-right
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-right
-                                                        blurRadius: 1.5,
-                                                        
-                                                      ),
-                                                      Shadow(
-                                                        offset: Offset(-1, 1),
-                                                        color: Colors.black, // Black shadow on the bottom-left
-                                                        blurRadius: 1.5,
-                                                      ),
-                                                    ]
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  carDetails["PlateNumber"].toString(),
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenWidth * 0.045),
-                                                ),
-                                                Spacer(),
-                                                
-                                              ],
-                                            ),
-                                          ),
                                           Row(
                                             children: [
-                                              SizedBox(width: ScreenWidth*0.15,),
-                                            Center(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(top: 6.0),
+                                              Text(
+                                                "${index + 1}",
+                                                style: TextStyle(fontSize: ScreenWidth * 0.04, fontWeight: FontWeight.bold ,),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                              Spacer(),
+                                              Center(
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "${carDetails["Manufacturer"].toString()} ${carDetails["Model"].toString()}",
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenWidth * 0.045 , color: Color(0xFF0A061F)),
+                                                    ),
+                                                  
+                                                  ],
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Text(" ")
+                                            ],
+                                          ),
+                                          
+                                                
+                                               
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              
+                                              Text(
+                                                carDetails["Year"].toString(),
+                                                style: TextStyle( color: Color(0xFF0A061F), fontSize: ScreenWidth * 0.04),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: ScreenHeight*0.01,),
+                                          Divider(
+                                            color:  Color(0xFF0A061F), 
+                                            thickness: 2,   
+                                          ),
+                                           SizedBox(height: ScreenHeight*0.01,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.color_lens_outlined),
+                                                  SizedBox(width: ScreenWidth*0.02,),
+                                                  Text(
+                                                    carDetails["Color"].toString(),
+                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0A061F), fontSize: ScreenWidth * 0.037),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.directions_car_outlined),
+                                                  SizedBox(width: ScreenWidth*0.02,),
+                                                  Text(
+                                                    carDetails["PlateNumber"].toString(),
+                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0A061F), fontSize: ScreenWidth * 0.037),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: ScreenHeight*0.01,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                            children: [
+                                              SizedBox(
+                                                height: ScreenHeight*0.042,
                                                 child: ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
-                                                    backgroundColor: const Color.fromARGB(255, 249, 208, 87),
+                                                    backgroundColor: Color(0xFF0A061F),
                                                     foregroundColor: Colors.white,
                                                     shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(15),
-                                                      side :BorderSide(
-                                                      color: Colors.black,
-                                                      width: 1,
-                                                    )
-                                                    )
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      side :BorderSide.none
+                                                    ),
                                                     
                                                   ),
                                                   onPressed: () {
@@ -570,51 +404,51 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                   },
                                                   child: Text(
                                                     "View history",
-                                                    //style: TextStyle(color: Colors.black),
+                                                    style: TextStyle(fontSize: ScreenWidth*0.035),
                                                   ),
                                                 ),
-                                              )
-                                            ),
-                                            SizedBox(width: ScreenWidth*0.05,),
-                                            IconButton(
-                                              onPressed: (){
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context){
-                                                    return AlertDialog(
-                                                      title: Text('Delete Car'),
-                                                      content: Text('Are you sure you want to Delete Car ${index+1}?'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop();
-                                                          },
-                                                          child: Text('Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            // Proceed with sign out
-                                                            try {
-                                                              _deleteCar(car["ChassisNumber"]);
-                                                              Navigator.of(context).pop();
-                                                            } catch (e) {
-                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                SnackBar(content: Text('Failed to Delete the car, please try again')),
-                                                              );
-                                                              print('Error Deleting the car: ${e.toString()}');
-                                                              Navigator.of(context).pop(); 
-                                                            }
-                                                          },
-                                                          child: Text('OK'),
-                                                        ),
-                                                      ],
+                                              ),
+                                                IconButton(
+                                                  onPressed: (){
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context){
+                                                        return AlertDialog(
+                                                          title: Text('Delete Car'),
+                                                          content: Text('Are you sure you want to Delete Car ${index+1}?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              child: Text('Cancel'),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () async {
+                                                                // Proceed with sign out
+                                                                try {
+                                                                  _deleteCar(car["ChassisNumber"]);
+                                                                  Navigator.of(context).pop();
+                                                                } catch (e) {
+                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                    SnackBar(content: Text('Failed to Delete the car, please try again')),
+                                                                  );
+                                                                  print('Error Deleting the car: ${e.toString()}');
+                                                                  Navigator.of(context).pop(); 
+                                                                }
+                                                              },
+                                                              child: Text('OK'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }
                                                     );
-                                                  }
-                                                );
-                                                
-                                                },
-                                                 icon: Icon(Icons.delete))
-                                        ]),
+                                                    
+                                                    },
+                                                    icon: Icon(Icons.delete , size: ScreenWidth*0.075, color: Color(0xFF0A061F),))
+                                                  ],
+                                                ),
+                                          
                                         ],
                                       ),
                                     );

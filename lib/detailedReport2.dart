@@ -176,6 +176,8 @@ class _detailedReport2State extends State<detailedReport2> {
                     ElevatedButton(
                       onPressed: () {
                         if (_option2 == 'No') {
+                           Navigator.of(context).popUntil(ModalRoute.withName('/'));
+
                           showDialog(
                             barrierDismissible: true,
                             context: context, 
@@ -187,9 +189,7 @@ class _detailedReport2State extends State<detailedReport2> {
                                   TextButton(
                                     onPressed: (){
                                       Navigator.pop(context);
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
+                                     
                                     }, 
                                     child: Text('OK')
                                   )

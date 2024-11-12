@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krooka/HomePage.dart';
 import 'package:krooka/globalVariables.dart';
+import 'package:krooka/myVehicles.dart';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 
 class detailedReport5 extends StatefulWidget {
@@ -17,6 +19,7 @@ class _detailedReport5State extends State<detailedReport5> {
   final bucket = Supabase.instance.client.storage.from('accident-images');
   final SupabaseClient supabase = Supabase.instance.client;
   List<File> _images = [];
+  bool hasNavigated = false;
 
   // Function to pick an image from the camera
   Future<void> _pickImageFromCamera() async {
@@ -64,6 +67,59 @@ class _detailedReport5State extends State<detailedReport5> {
       ),
     );
   }
+
+  void checkIfOfficerAccepted(int AccidentID ,double lat , double long) {
+    supabase.channel('Accident').onPostgresChanges(
+    event: PostgresChangeEvent.update,
+    schema: 'public',
+    table: 'Accident',
+    filter: PostgresChangeFilter(
+      type: PostgresChangeFilterType.neq, 
+      column: 'OfficerID', 
+      value: null,
+    ),
+    callback: (payload) {
+      if (payload.newRecord['AccidentID'] == AccidentID && !hasNavigated) {
+        hasNavigated = true;
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pushReplacementNamed(context, '/InProgress', arguments: <String, dynamic>{
+          'Lat' : lat,
+          'Long' : long,
+          'ID' : AccidentID
+        });
+      }
+    },
+  ).subscribe();
+  }
+
+  void showWaitingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+            side: BorderSide(
+              color: Colors.black,
+              width: 2,
+            ),
+          ),
+          title:Text("Waiting for officer approval..." ,style:TextStyle(fontSize: 16 , fontWeight: FontWeight.bold),),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 15),
+              Text("Your report has been issued. Get to the side of the road."),
+              SizedBox(height: 30),
+              SpinKitFadingCircle(color: Colors.black, size: 50.0),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,7 +185,8 @@ class _detailedReport5State extends State<detailedReport5> {
                         _showSnackBar("Please upload the photos of the accident");
                       }
                       else {
-                         _showSnackBar("Your report has been issued. Get to the side of the road.");
+                        showWaitingDialog();
+
                         dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
                         print (data);
                         dynamic userID = await supabase.from('User').select('IdNumber').eq('AuthID', AuthService.authID!).single();
@@ -151,11 +208,9 @@ class _detailedReport5State extends State<detailedReport5> {
                           });
                         });
                         await _uploadImagesToStorage(response["AccidentID"]);
-                        Navigator.pushNamed(context, '/InProgress', arguments: <String, dynamic>{
-                          'Lat' : data['Lat'],
-                          'Long' : data['Long'],
-                          'ID' : response["AccidentID"]
-                        });
+
+                        checkIfOfficerAccepted(response['AccidentID'] , data['Lat'], data['Long']);
+
                       }
                     }
                     catch(e){

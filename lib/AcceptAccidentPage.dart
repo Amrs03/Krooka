@@ -102,7 +102,7 @@ class _acceptAccidentState extends State<acceptAccident> {
       await supabase
         .from('Officer')
         .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
-        .eq('OfficerID', '9876543210');
+        .eq('OfficerID', '6666664444');
       print ('Location has been updated \n :)');
     }
     catch(e) {

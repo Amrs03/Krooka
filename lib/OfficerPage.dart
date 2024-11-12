@@ -62,7 +62,7 @@ class _OfficerPageState extends State<OfficerPage> {
 
   void _subscribeToAccidentUpdates() {
     supabase.channel('Accident').onPostgresChanges(
-      event: PostgresChangeEvent.all,
+      event: PostgresChangeEvent.all,                   // I think this must be insert only
       schema: 'public',
       table: 'Accident',
       callback: (payload) {
@@ -356,7 +356,7 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                               //   .eq('AccidentID', accident['AccidentID']);
                               await supabase
                                 .from('Accident')
-                                .update({'OfficerID': '9876543210'})
+                                .update({'OfficerID': '6666664444'})
                                 .eq('AccidentID', accident['AccidentID']);
                               dynamic query = await supabase.from('Accident_Photos').select().eq('accidentId', accident['AccidentID']);
                               Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{

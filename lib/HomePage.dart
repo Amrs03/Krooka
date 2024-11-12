@@ -19,12 +19,14 @@ class homePage extends StatelessWidget {
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home:InProgress(data: {'Lat' : 32.0041678, 'Long' : 35.8794266, 'ID' : 74}),
+        initialRoute: '/',
+        //home:InProgress(data: {'Lat' : 32.0041678, 'Long' : 35.8794266, 'ID' : 74}),
         routes: {
+          '/': (context) =>MyHomePage(),
           '/DR2' : (context) => detailedReport2(),
           '/DR4' : (context) => detailedReport4(),
           '/DR5' : (context) => detailedReport5(),
-          'InProgress' : (context) {
+          '/InProgress' : (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
             return InProgress(data: args);
           },
@@ -46,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   AuthService _auth = AuthService();
-  int selectedIndex = 0;
+  int selectedIndex = 1;
 
   //method to update the new selected index
   void navigateBottomBar(int index){
@@ -54,11 +56,18 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedIndex = index;
     });
   }
+    void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+  
   final List pages = [
+     AuthWrapper(child: MyVehicles()),
     //homepage
     MyHomePage(),
     //profile
-    AuthWrapper(child: MyVehicles()),
+   
     //setings
     SignInPage(),
     //toDoPage()
@@ -69,154 +78,131 @@ class _MyHomePageState extends State<MyHomePage> {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body : selectedIndex != 0 ? pages[selectedIndex] : 
+      body : selectedIndex != 1 ? pages[selectedIndex] : 
       Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            
-            Spacer(),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => reportAccidents()),
-                );
-              },
+        child: Stack(
+          children:[
+            Container(
+              height: ScreenHeight,
+              width: ScreenWidth,
+              color: Color(0xF5F5FA),
+            ),
+            ClipPath(
+              clipper: WaveClipper(),
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-                padding: EdgeInsets.only(left : 40),
-                height: MediaQuery.sizeOf(context).height*0.15,
-                width : MediaQuery.sizeOf(context).width*0.96,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black12 , width:2),
-                  boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade500, // Shadow color with opacity
-                                    spreadRadius: 1, // How wide the shadow spreads
-                                    blurRadius: 7, // How soft the shadow looks
-                                    offset: Offset(4.0, 4.0), // Horizontal and vertical shadow offset
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white, // Shadow color with opacity
-                                    spreadRadius: 1, // How wide the shadow spreads
-                                    blurRadius: 7, // How soft the shadow looks
-                                    offset: Offset(-4.0, -4.0), // Horizontal and vertical shadow offset
-                                  ),
-                                ],
-                ),
+                color:Color(0xFF0A061F),
+                height: ScreenHeight,
+                width: ScreenWidth,
+              ),
+            ),
+             Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => reportAccidents()),
+                  );
+                },
                 child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.car_crash, size : 50),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text("Report Accident", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold)),
-                      ),
-                    ],
+                  margin: EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+                  padding: EdgeInsets.only(left : 40),
+                  height: MediaQuery.sizeOf(context).height*0.15,
+                  width : MediaQuery.sizeOf(context).width*0.96,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.black12 , width:2),
+                    
+                  ),
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.car_crash, size : 50),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text("Report Accident", style: TextStyle(fontSize: ScreenWidth*0.05 , fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  child: Container(
-                    height: ScreenHeight*0.18,
-                    width: ScreenWidth*0.42,
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black12, width: 2),
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade500, 
-                                    spreadRadius: 1,
-                                    blurRadius: 7, 
-                                    offset: Offset(4.0, 4.0), 
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    spreadRadius: 1,
-                                    blurRadius: 7,
-                                    offset: Offset(-4.0, -4.0), 
-                                  ),
-                                ],
-                
-                    ),
-                    child: Center(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.directions_car ,size: 45),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text("My Vehicles", style: TextStyle(fontSize: ScreenWidth*0.04 , fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
-                            ),
-                          ],
-                        ),
-                         
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    child: Container(
+                      height: ScreenHeight*0.18,
+                      width: ScreenWidth*0.42,
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black12, width: 2),
+                        borderRadius: BorderRadius.circular(25),
+                        
+                  
                       ),
-                    ),
-                  )
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OfficerPage()),
-                    );
-                  },
-                  child: Container(
-                    height: ScreenHeight*0.18,
-                    width: ScreenWidth*0.42,
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black12, width: 2),
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade500, 
-                                    spreadRadius: 1, 
-                                    blurRadius: 7, 
-                                    offset: Offset(4.0, 4.0), 
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    spreadRadius: 1,
-                                    blurRadius: 7,
-                                    offset: Offset(-4.0, -4.0),
-                                  ),
-                                ],
-                
-                    ),
-                    child: Center(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.recent_actors ,size: 45),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text("Accidents", style: TextStyle(fontSize: ScreenWidth*0.04,  fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
-                            ),
-                          ],
+                      child: Center(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.directions_car ,size: 45),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text("My Vehicles", style: TextStyle(fontSize: ScreenWidth*0.04 , fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
+                              ),
+                            ],
+                          ),
+                           
                         ),
-                         
                       ),
-                    ),
-                  )
-                ),
-              ],
-            ),
-            SizedBox(height: 20,)
+                    )
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OfficerPage()),
+                      );
+                    },
+                    child: Container(
+                      height: ScreenHeight*0.18,
+                      width: ScreenWidth*0.42,
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black12, width: 2),
+                        borderRadius: BorderRadius.circular(25),
+                        
+                  
+                      ),
+                      child: Center(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.recent_actors ,size: 45),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text("Accidents", style: TextStyle(fontSize: ScreenWidth*0.04,  fontWeight: FontWeight.bold) , textAlign: TextAlign.center,),
+                              ),
+                            ],
+                          ),
+                           
+                        ),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,)
+            ],
+          ),
           ],
         ),
       ),
@@ -230,6 +216,9 @@ class _MyHomePageState extends State<MyHomePage> {
             switch (event) {
               case AuthChangeEvent.signedIn:
                 return BottomNavigationBar(
+                  backgroundColor: Color(0xFF0A061F),
+                  unselectedItemColor: Colors.white,
+                  selectedItemColor: Colors.blueAccent,
                   currentIndex: selectedIndex,
                   onTap: (index) async {
                     if (index == 2) {
@@ -242,28 +231,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  // Close the dialog without signing out
                                   Navigator.of(context).pop();
                                 },
                                 child: Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  // Proceed with sign out
-                                  try {
-                                    setState(() {
-                                      selectedIndex = 0;
-                                    });
-                                    Navigator.of(context).pop();
-                                    await _auth.signOut();
-                                    print('AuthID : ${AuthService.authID}');
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Failed to sign out, please try again')),
-                                    );
-                                    print('Error signing out: ${e.toString()}');
-                                    Navigator.of(context).pop(); // Close the dialog even if sign-out fails
-                                  }
+                                  setState(() {
+                                    selectedIndex = 0;
+                                  });
+                                  Navigator.of(context).pop();
+                                  await _auth.signOut();
                                 },
                                 child: Text('OK'),
                               ),
@@ -279,38 +257,129 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   type: BottomNavigationBarType.fixed,
                   items: [
-                    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-                    BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
-                  ]
+                    _buildNavigationBarItem(
+                      icon: Icons.person,
+                      label: 'Profile',
+                      isSelected: selectedIndex == 0,
+                    ),
+                    _buildNavigationBarItem(
+                      icon: Icons.home,
+                      label: 'Home',
+                      isSelected: selectedIndex == 1,
+                    ),
+                    _buildNavigationBarItem(
+                      icon: Icons.logout,
+                      label: 'Logout',
+                      isSelected: selectedIndex == 2,
+                    ),
+                  ],
                 );
               default:
                 return BottomNavigationBar(
+                  backgroundColor: Color(0xFF0A061F),
+                  unselectedItemColor: Colors.white,
+                  selectedItemColor: Colors.blueAccent,
                   currentIndex: selectedIndex,
-                  onTap: navigateBottomBar,
+                  onTap: _onItemTapped,
                   type: BottomNavigationBarType.fixed,
+                   
                   items: [
-                    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-                    BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login')
-                  ]
-              );
+                    _buildNavigationBarItem(
+                      icon: Icons.person,
+                      label: 'Profile',
+                      isSelected: selectedIndex == 0,
+                    ),
+                    _buildNavigationBarItem(
+                      icon: Icons.home,
+                      label: 'Home',
+                      isSelected: selectedIndex == 1,
+                    ),
+                    _buildNavigationBarItem(
+                      icon: Icons.login,
+                      label: 'Login',
+                      isSelected: selectedIndex == 2,
+                    ),
+                  ],
+                );
             }
           }
           return BottomNavigationBar(
+            backgroundColor: Color(0xFF0A061F),
+            unselectedItemColor: Colors.white,
+            selectedItemColor: Colors.blueAccent,
             currentIndex: selectedIndex,
-            onTap: navigateBottomBar,
+            onTap: _onItemTapped,
             type: BottomNavigationBarType.fixed,
             items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-              BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login')
-            ]
+              _buildNavigationBarItem(
+                icon: Icons.person,
+                label: 'Profile',
+                isSelected: selectedIndex == 0,
+              ),
+              _buildNavigationBarItem(
+                icon: Icons.home,
+                label: 'Home',
+                isSelected: selectedIndex == 1,
+              ),
+              _buildNavigationBarItem(
+                icon: Icons.login,
+                label: 'Login',
+                isSelected: selectedIndex == 2,
+              ),
+            ],
           );
-        }
-      )
+        },
+      ),
+    );
+  }
+  BottomNavigationBarItem _buildNavigationBarItem({
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+  }) {
+    return BottomNavigationBarItem(
+      icon: isSelected
+          ? Container(
+              decoration: BoxDecoration(
+                color: Colors.blueAccent.withOpacity(0.4), // Background color
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 8 ,horizontal:15 ),
+              child: Icon(icon, color: Colors.blueAccent),
+            )
+          : Icon(icon),
+      label: label,
     );
   }
 }
 
 
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height-size.height*0.175); // Start at bottom-left
+    
+    // First upward curve
+    path.quadraticBezierTo(
+      size.width / 4, size.height - size.height*0.25,  // First control point for upward curve
+      size.width / 2, size.height - size.height*0.25,   // Peak of the upward curve
+    );
+
+    // Second downward curve
+    path.quadraticBezierTo(
+      size.width*0.9 , size.height - size.height*0.25,    // Control point for downward curve
+      size.width, size.height - size.height*0.35,       // Bottom-right of the curve
+    );
+
+    // Complete the path by drawing up to the top-right corner and closing the shape
+    path.lineTo(size.width, 0); // Move to top-right corner
+    path.lineTo(0, 0); // Back to top-left corner
+    path.close(); // Complete the path
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
