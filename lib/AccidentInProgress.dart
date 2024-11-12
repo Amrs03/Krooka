@@ -76,7 +76,9 @@ class _InProgressState extends State<InProgress> {
     final GoogleMapController controller = await _controller.future;
     officerLocation = LatLng(newLat, newLong);
     dynamic coordiantes = await getPolylinePoints();
-      generatePolylineFromPoints(coordiantes);
+    generatePolylineFromPoints(coordiantes);
+    dynamic estTime = await _getEstimatedTime(officerLocation.latitude, officerLocation.longitude, accidentLocation.latitude, accidentLocation.longitude);
+    estimatedTime = estTime['duration_in_traffic'];
     setState(() {
       _officerMarker = Marker(
         markerId: MarkerId('officerMarker'),
