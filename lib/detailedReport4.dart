@@ -158,13 +158,13 @@ class _detailedReport4State extends State<detailedReport4> {
               SizedBox(height: ScreenHeight*0.07,),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFF5F5FA),
-                            foregroundColor: Color(0xFF0A061F),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7)
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                          ) ,
+                  backgroundColor: Color(0xFFF5F5FA),
+                  foregroundColor: Color(0xFF0A061F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7)
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                ) ,
                 onPressed: () async {
                   try {
                     final uid = await supabase
@@ -172,13 +172,13 @@ class _detailedReport4State extends State<detailedReport4> {
                       .select("IdNumber")
                       .eq("AuthID", aId)
                       .single();
-                  final response = await supabase
+                    final response = await supabase
                       .from("Have")
                       .select("ChassisNumber")
                       .eq("IdNumber", uid["IdNumber"]);
-                  final List chassisNumbers = response.map((item) => item["ChassisNumber"]).toList();
-                  print (chassisNumbers);
-                  final carDetails = await Future.wait(
+                    final List chassisNumbers = response.map((item) => item["ChassisNumber"]).toList();
+                    print (chassisNumbers);
+                    final carDetails = await Future.wait(
                     chassisNumbers.map((chassisNumber) async {
                       return await supabase
                           .from("Car")
@@ -202,14 +202,9 @@ class _detailedReport4State extends State<detailedReport4> {
                         content: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Container(
-                            constraints: BoxConstraints(
-                              maxHeight: ScreenHeight *0.5,
-
-                            ),
+                            height: ScreenHeight * 0.5,
+                            width: ScreenWidth * 0.8,
                             child: ListView.builder(
-                              
-                              shrinkWrap: true,
-                              
                               itemCount: carDetails.length,
                               itemBuilder: (context, index) {
                                 final car = carDetails[index];
@@ -244,16 +239,14 @@ class _detailedReport4State extends State<detailedReport4> {
                                         ),
                                         Text("${car['PlateNumber']}" , style: TextStyle(fontSize: ScreenWidth*0.035),),   
                                       ],
-                                    ),
-                                                            
+                                    ),                  
                                   ),
                                 );
-                                
                               },
-                              
                             ),
                           ),
                         ),
+                        
                         actions: [
                           Center(child: ElevatedButton
                           (
@@ -268,9 +261,7 @@ class _detailedReport4State extends State<detailedReport4> {
                             onPressed: (){Navigator.of(context).pop();}, child: Text("cancel")))
                         ],
                       );
-                      
                     },
-                    
                   );
                   }
                   catch(e){

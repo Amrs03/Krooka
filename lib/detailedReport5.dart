@@ -22,6 +22,7 @@ class _detailedReport5State extends State<detailedReport5> {
   final SupabaseClient supabase = Supabase.instance.client;
   List<File> _images = [];
   bool hasNavigated = false;
+  bool isCancelled = false;
 
   // Function to pick an image from the camera
   Future<void> _pickImageFromCamera() async {
@@ -85,8 +86,6 @@ class _detailedReport5State extends State<detailedReport5> {
         hasNavigated = true;
         Navigator.of(context, rootNavigator: true).pop();
         Navigator.pushReplacementNamed(context, '/InProgress', arguments: <String, dynamic>{
-          'Lat' : lat,
-          'Long' : long,
           'ID' : AccidentID
         });
       }
@@ -94,53 +93,61 @@ class _detailedReport5State extends State<detailedReport5> {
   ).subscribe();
   }
 
-  void showWaitingDialog() {
+  void showWaitingDialog(int accidentID) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-            side: BorderSide(
-              color: Colors.black,
-              width: 2,
-            ),
-          ),
-          title:Text("Waiting for officer approval..." ,style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 15),
-              Text("Your report has been issued."),
-              Text("Get to the side of the road."),
-              SizedBox(height: 30),
-              Row(
-                children: [
-                  Spacer(),
-                  SpinKitFadingCircle(color: Color(0xFF0A061F), size: 50.0),
-                  Spacer()
-                ],
-              ),
-              SizedBox(height: 15,),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0A061F),
-                  foregroundColor: Colors.white,
-                   shape: RoundedRectangleBorder(
-                 borderRadius: BorderRadius.circular(10),
-                 side: BorderSide(
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+              side: BorderSide(
                 color: Colors.black,
-                 width: 1
-                )
+                width: 2,
+              ),
+            ),
+            title:Text("Waiting for officer approval..." ,style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 15),
+                Text("Your report has been issued."),
+                Text("Get to the side of the road."),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    Spacer(),
+                    SpinKitFadingCircle(color: Color(0xFF0A061F), size: 50.0),
+                    Spacer()
+                  ],
+                ),
+                SizedBox(height: 15,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF0A061F),
+                    foregroundColor: Colors.white,
+                     shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(10),
+                   side: BorderSide(
+                  color: Colors.black,
+                   width: 1
+                  )
+                                                                    
+                  ),
                                                                   
-                ),
-                                                                
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-                onPressed: (){Navigator.pop(context);}, child: Text("Cancel",style: TextStyle(fontSize: 10),))
-            ],
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  onPressed: ()async{
+                    await supabase.from('Accident').update({'Status' : 'canceled'}).eq('AccidentID', accidentID);
+                    isCancelled = true;
+                    Navigator.pop(context);
+                  }, 
+                  child: Text("Cancel",style: TextStyle(fontSize: 12)))
+              ],
+            ),
           ),
         );
       },
@@ -259,19 +266,19 @@ class _detailedReport5State extends State<detailedReport5> {
                           _showSnackBar("Please upload the photos of the accident");
                         }
                         else {
-                          showWaitingDialog();
-        
                           dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
                           print (data);
                           dynamic userID = await supabase.from('User').select('IdNumber').eq('AuthID', AuthService.authID!).single();
+                          List plates = data['Plates'];
                           final response = await supabase.from('Accident').insert({
                             "Injuries" : data['Inj'] == 'Yes' ? true : false,
                             "NumberOfCars" : data['Plates'].length,
                             "latitude" : data['Lat'],
                             "longitude" : data['Long'],
-                            "applicantID" : userID['IdNumber']
+                            "applicantID" : userID['IdNumber'],
+                            "Status" : '-'
                           }).select('AccidentID').single();
-                          List plates = data['Plates'];
+                          showWaitingDialog(response['AccidentID']);
                           plates.forEach((plate) async{
                             print (plate);
                             await supabase.from("Been In").insert({
@@ -282,9 +289,11 @@ class _detailedReport5State extends State<detailedReport5> {
                             });
                           });
                           await _uploadImagesToStorage(response["AccidentID"]);
-        
                           checkIfOfficerAccepted(response['AccidentID'] , data['Lat'], data['Long']);
-        
+                          await supabase.from('Accident').update({'Status' : 'pending'}).eq('AccidentID', response['AccidentID']);
+                          if (isCancelled) {
+                            Navigator.of(context).popUntil(ModalRoute.withName('/Homepage'));
+                          }
                         }
                       }
                       catch(e){

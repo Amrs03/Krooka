@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
-String userID = "";
-
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -139,7 +136,7 @@ class AuthService {
       rethrow;
     }
   }
-  Future<AuthResponse> signIn (ID, password) async {
+  Future<AuthResponse> civSignIn (ID, password) async {
     try{
       final profileResponse = await supabase.from('User').select().eq('IdNumber', ID);
       if (profileResponse.isEmpty) {
@@ -156,7 +153,24 @@ class AuthService {
     catch(e) {
       rethrow;
     }
-
+  }
+  Future<AuthResponse> officerSignIn (ID, password) async {
+    try{
+      final profileResponse = await supabase.from('Officer').select().eq('OfficerID', ID);
+      if (profileResponse.isEmpty) {
+        throw Exception('Officer with this ID number does not exist');
+      }
+      final email = '$ID-officer@example.com';
+      AuthResponse result = await supabase.auth.signInWithPassword(
+        password: password,
+        email: email
+      );
+      authID = result.user!.id;
+      return result;
+    }
+    catch(e) {
+      rethrow;
+    }
   }
 
   Future<void> signOut () async {
@@ -171,4 +185,3 @@ class AuthService {
 }
 
 //This list is to be implemented in the database
-List <User> registeredUsers = [];

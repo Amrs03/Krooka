@@ -1,58 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:krooka/officerSignIn.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:krooka/OfficerPage.dart';
+import 'package:krooka/Wrapper/AuthWrapper.dart';
 import 'globalVariables.dart';
-import 'registerPage.dart';
-import 'HomePage.dart';
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+import 'package:supabase_flutter/supabase_flutter.dart';
+class officerLogIn extends StatefulWidget {
+  const officerLogIn({super.key});
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  State<officerLogIn> createState() => _officerLogInState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _officerLogInState extends State<officerLogIn> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _auth = AuthService();
-
   @override
   Widget build(BuildContext context) {
-      final ScreenHeight = MediaQuery.sizeOf(context).height;
-      final ScreenWidth = MediaQuery.sizeOf(context).width;
-      return PopScope(
-        canPop: false,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false, 
-          body: SingleChildScrollView(
+    final ScreenHeight = MediaQuery.sizeOf(context).height;
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
+    return Scaffold(
+      resizeToAvoidBottomInset: false, 
+      body: SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: ScreenHeight*0.05,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children:[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:  35.0),
-                      child: Text("Sign In",style: TextStyle(fontSize: ScreenWidth*0.08 , color: Color(0xFF0A061F), fontWeight: FontWeight.bold),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:  35.0),
-                      child: GestureDetector(
-                        child: Image.asset('assets/copIcon.png'),
-                        onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => officerLogIn()),
-                          );
-                        },
-                      ),
-                    )
-                  ] 
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:  35.0),
+                  child: Text("Officer Sign In",style: TextStyle(fontSize: ScreenWidth*0.08 , color: Color(0xFF0A061F), fontWeight: FontWeight.bold),),
                 ),
                 SizedBox(height: ScreenHeight*0.05,),
                 Form(
@@ -125,8 +103,12 @@ class _SignInPageState extends State<SignInPage> {
                               onPressed: () async{
                                 if (_formKey.currentState!.validate()) {
                                   try {
-                                    await _auth.civSignIn(_idController.text, _passwordController.text);
-                                    await Navigator.pushReplacementNamed(context, '/Homepage');
+                                    await _auth.officerSignIn(_idController.text, _passwordController.text);
+                                    await Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => AuthWrapper(child: OfficerPage())),
+                                      (Route<dynamic> route) => false
+                                    );
                                   }
                                   catch(e) {
                                     print('Failed to sign in: ${e.toString()}');
@@ -137,8 +119,8 @@ class _SignInPageState extends State<SignInPage> {
                                 }
                               },
                               child: Text('Sign In' , style:TextStyle(fontSize: ScreenWidth*0.037),),
-                            ),
-                             SizedBox(height: ScreenHeight*0.05,),
+                            ), 
+                            SizedBox(height: ScreenHeight*0.05,),
                           ],
                         ),
                       ),
@@ -146,59 +128,20 @@ class _SignInPageState extends State<SignInPage> {
                       ClipPath(
                         clipper: CustomClipperPath(),
                         child: Container(
-                          height: ScreenHeight*0.5,
+                          height: ScreenHeight*0.6,
                           width: ScreenWidth,
                           color: Color(0xFF0A061F),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Spacer(),
-                              Text("Don't have an account", style: TextStyle(color: Colors.white , fontSize: ScreenWidth*0.07 , fontWeight: FontWeight.bold),),
-                              SizedBox(height: ScreenHeight*0.05,),
-                              Row(
-                                children: [
-                                  Spacer(),
-                                  //SizedBox(width: ScreenWidth*0.4,),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: Color(0xFF0A061F),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      padding: EdgeInsets.symmetric(horizontal: 40),
-                                    ),
-                                    onPressed: (){
-                                       Navigator.push(
-                                         context,
-                                         MaterialPageRoute(builder: (context) => registerPage()),
-                                        );
-                                    },
-                                     child: Text("Sign Up"),
-                                    ),
-                                    SizedBox(width: ScreenWidth*0.1,)
-                                ],
-                              ),
-                              Spacer(),
-                            ],
-                          ),
                         ),
                       )
-                     
-                    
                     ],
                   ),
                 ),
-                Container(color: Color(0xFF0A061F), height: 100)
               ],
             ),
           ),
-        ),
-      );
+    );
   }
 }
-
-
 
 class CustomClipperPath extends CustomClipper<Path> {
   @override

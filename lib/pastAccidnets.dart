@@ -232,7 +232,7 @@ class _PastAccidentsState extends State<PastAccidents> {
                   itemCount: accidents.length,
                   itemBuilder: (context, index) {
                     return  Container(
-                      height: ScreenHeight * 0.23,
+                      height: ScreenHeight * 0.2,
                       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -285,21 +285,7 @@ class _PastAccidentsState extends State<PastAccidents> {
                                     ],
                                   ),
                                   SizedBox(height: ScreenHeight * 0.02),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.pending_outlined, color: Color(0xFF0A061F)),
-                                      SizedBox(width: ScreenWidth * 0.03),
-                                      Text(
-                                        "${accidents[index].Status}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF0A061F),
-                                          fontSize: ScreenWidth * 0.033,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: ScreenHeight * 0.02),
+                                  
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [

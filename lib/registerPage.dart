@@ -87,6 +87,7 @@ class _registerPageState extends State<registerPage> {
                       Text("First Name",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _fNameControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'First Name',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
@@ -107,6 +108,7 @@ class _registerPageState extends State<registerPage> {
                       Text("Last Name",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _lNameControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'Last Name',
                          border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
@@ -127,6 +129,7 @@ class _registerPageState extends State<registerPage> {
                       Text("ID Number",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _idControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'ID Number',
                          border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
@@ -150,6 +153,7 @@ class _registerPageState extends State<registerPage> {
                       Text("Phone Number",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _pNumberControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'Phone Number',
                          border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
@@ -173,6 +177,7 @@ class _registerPageState extends State<registerPage> {
                       Text("Date of Birth",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _dateControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           labelText: "Date of birth",
                           suffixIcon: Icon(Icons.calendar_today ),
@@ -202,6 +207,7 @@ class _registerPageState extends State<registerPage> {
                       Text("Password",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _passWordControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'Password',
                          border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
@@ -226,6 +232,7 @@ class _registerPageState extends State<registerPage> {
                       Text("Confirm Password",style: TextStyle(fontSize: ScreenWidth*0.03 , color: Colors.white),textAlign: TextAlign.left,),
                       TextFormField(
                         controller: _confirmPassWordControler,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(labelText: 'Confirm Password',
                          border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
