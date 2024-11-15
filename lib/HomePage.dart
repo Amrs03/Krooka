@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:krooka/AccidentInProgress.dart';
 import 'package:krooka/OfficerPage.dart';
+import 'package:krooka/detailedReport.dart';
 import 'package:krooka/detailedReport4.dart';
 import 'package:krooka/detailedReport5.dart';
 import 'myVehicles.dart';
@@ -61,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedIndex = index;
     });
   }
+  final pagesWithoutNavBar = [2]; // Example: hide nav bar on Logout page (index 2)
   
   final List pages = [
      AuthWrapper(child: MyVehicles()),
@@ -88,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color(0xF5F5FA),
             ),
             ClipPath(
-              clipper: WaveClipper(),
+              clipper: WaveClipper2(),
               child: Container(
                 color:Color(0xFF0A061F),
                 height: ScreenHeight,
@@ -103,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => reportAccidents()),
+                    MaterialPageRoute(builder: (context) => AuthWrapper(child: mapsWidget(),)),
                   );
                 },
                 child: Container(
@@ -207,7 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       
-      bottomNavigationBar: StreamBuilder(
+      bottomNavigationBar:
+       StreamBuilder(
         stream: Supabase.instance.client.auth.onAuthStateChange,
         builder: (context, snapshot) {
           final authState = snapshot.data;
@@ -226,16 +229,50 @@ class _MyHomePageState extends State<MyHomePage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Sign Out'),
-                            content: Text('Are you sure you want to sign out?'),
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              side: BorderSide(
+                                color: Colors.black,
+                                width: 2,
+                              ),
+                            ),
+                            title: Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold),),
+                            content: Text('Are you sure you want to sign out '),
                             actions: [
-                              TextButton(
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Color(0xFF0A061F),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: BorderSide(
+                                      color: Colors.black,
+                                      width: 1
+                                    )
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                ),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Cancel'),
+                                child: Text('Cancel' ,style: TextStyle(fontSize: ScreenWidth*0.035),),
                               ),
-                              TextButton(
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red[300],
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: BorderSide(
+                                      color: Colors.black,
+                                      width: 1
+                                    )
+                                    
+                                  ),
+                                  
+                                  padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                ),
                                 onPressed: () async {
                                   setState(() {
                                     selectedIndex = 0;
@@ -243,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.of(context).pop();
                                   await _auth.signOut();
                                 },
-                                child: Text('OK'),
+                                child: Text('Sign Out',style: TextStyle(fontSize: ScreenWidth*0.035),),
                               ),
                             ],
                           );
@@ -355,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 
-class WaveClipper extends CustomClipper<Path> {
+class WaveClipper2 extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();

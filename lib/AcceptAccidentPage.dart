@@ -205,6 +205,7 @@ class _acceptAccidentState extends State<acceptAccident> {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
+      backgroundColor: Color(0xFFF5F5FA),
       body: Column(
         children: [
           SizedBox(height: ScreenHeight*0.05),
@@ -216,20 +217,19 @@ class _acceptAccidentState extends State<acceptAccident> {
               width: ScreenWidth*0.8,
               height: ScreenHeight *0.075,
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 2
-                ),
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.grey[200]
+                
+                borderRadius: BorderRadius.circular(15),
+                color: Color(0xFF7DA0CA)
               ),
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.room, size: 26),
+                    
+                    Text("Go to location", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22 ,color: Colors.white)),
                     SizedBox(width: 10),
-                    Text("Go to location", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+
+                   Icon(Icons.room_outlined, size: 28 , color: Colors.white,),
                   ],
                 ),
               ),
@@ -241,6 +241,7 @@ class _acceptAccidentState extends State<acceptAccident> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.05),
               child: GridView.builder(
+                
                 shrinkWrap: true, // Allows the GridView to size itself based on its content
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -258,7 +259,9 @@ class _acceptAccidentState extends State<acceptAccident> {
                         );
                       }
                     },
-                    child: done ? Image.memory(imageBytes[index], fit: BoxFit.cover): Center(child: CircularProgressIndicator())
+                    child: done ? ClipRRect(
+                      borderRadius: BorderRadius.circular(15), // Adjust the radius for the circular effect
+                      child: Image.memory(imageBytes[index], fit: BoxFit.cover)): Center(child: CircularProgressIndicator())
                   );
                 }
               ),
@@ -332,106 +335,116 @@ class _acceptAccidentState extends State<acceptAccident> {
           ),
           Container(
             width: ScreenWidth*1,
-            height: ScreenHeight*0.18,
+            height: ScreenHeight*0.3,
             padding: EdgeInsets.only(top: 10 , bottom: 2),
             margin: EdgeInsets.only(right: ScreenWidth*0.003,left: ScreenWidth*0.003 ,top: 2),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Color(0xFF0A061F),
               borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-              border: Border(
-                 top: BorderSide(color: Colors.black, width: 2.0),
-                  left: BorderSide(color: Colors.black, width: 2.0),
-                 right: BorderSide(color: Colors.black, width: 2.0),
-              )
+              
             ),
-             child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      height: ScreenHeight *0.065,
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+             child: Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        height: ScreenHeight *0.065,
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                        decoration: BoxDecoration(
+                        
+                          borderRadius: BorderRadius.circular(12),
+                          color: Color(0xFF0A061F),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.8), // White shadow with opacity
+                              spreadRadius: 1, // How much the shadow spreads out
+                              blurRadius: 2, // Softness of the shadow
+                              offset: Offset(1, 4), // Horizontal and vertical position of the shadow
+                            ),
+                          ],
+                        ),
+                        
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.person_outline_outlined, color: Colors.white,),
+                              SizedBox(width:3),
+                              Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) ,),
+                            ],
+                          )
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _makePhoneCall(applicantInfo['PhoneNum']);
+                          print("test");
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          height: ScreenHeight *0.065,
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                          decoration: BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(12),
+                            color: Color(0xFF0A061F),
+                            boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.8), // White shadow with opacity
+                              spreadRadius: 1, // How much the shadow spreads out
+                              blurRadius: 2, // Softness of the shadow
+                              offset: Offset(1, 4), // Horizontal and vertical position of the shadow
+                            ),
+                          ],
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.phone , color: Colors.white,),
+                                SizedBox(width: 5,),
+                                Text("${applicantInfo['PhoneNum']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: ScreenHeight*0.02,),
+                  GestureDetector(
+                    onTap: (){
+                      // OpenGoogleMaps(widget.data['lat'], widget.data['long']);
+                       
+                    },
+                    child: Container(
+                      width: ScreenWidth*0.9,
+                      height: ScreenHeight *0.07,
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black,
                           width: 2
                         ),
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey[200]
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white
                       ),
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.person),
-                            SizedBox(width:3),
-                            Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']} "),
+
+                            Text("Finished", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
                           ],
-                        )
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        _makePhoneCall(applicantInfo['PhoneNum']);
-                        print("test");
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        height: ScreenHeight *0.065,
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 2
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.grey[200]
                         ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.phone),
-                              SizedBox(width: 5,),
-                              Text("${applicantInfo['PhoneNum']}")
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                GestureDetector(
-                  onTap: (){
-                    // OpenGoogleMaps(widget.data['lat'], widget.data['long']);
-        
-                  },
-                  child: Container(
-                    width: ScreenWidth*0.9,
-                    height: ScreenHeight *0.07,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 2
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey[200]
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.check, size: 26),
-                          SizedBox(width: 10),
-                          Text("Finished", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+               ),
              ),
            ),
         ],

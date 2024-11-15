@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'detailedReport2.dart';
+
 
 class detailedReport5 extends StatefulWidget {
   @override
@@ -105,14 +107,39 @@ class _detailedReport5State extends State<detailedReport5> {
               width: 2,
             ),
           ),
-          title:Text("Waiting for officer approval..." ,style:TextStyle(fontSize: 16 , fontWeight: FontWeight.bold),),
+          title:Text("Waiting for officer approval..." ,style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
           content: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 15),
-              Text("Your report has been issued. Get to the side of the road."),
+              Text("Your report has been issued."),
+              Text("Get to the side of the road."),
               SizedBox(height: 30),
-              SpinKitFadingCircle(color: Colors.black, size: 50.0),
+              Row(
+                children: [
+                  Spacer(),
+                  SpinKitFadingCircle(color: Color(0xFF0A061F), size: 50.0),
+                  Spacer()
+                ],
+              ),
+              SizedBox(height: 15,),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF0A061F),
+                  foregroundColor: Colors.white,
+                   shape: RoundedRectangleBorder(
+                 borderRadius: BorderRadius.circular(10),
+                 side: BorderSide(
+                color: Colors.black,
+                 width: 1
+                )
+                                                                  
+                ),
+                                                                
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                ),
+                onPressed: (){Navigator.pop(context);}, child: Text("Cancel",style: TextStyle(fontSize: 10),))
             ],
           ),
         );
@@ -122,107 +149,157 @@ class _detailedReport5State extends State<detailedReport5> {
 
   @override
   Widget build(BuildContext context) {
+     final ScreenHeight = MediaQuery.of(context).size.height;
+    final ScreenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Accident photos'),
+        backgroundColor:Color(0xFFF5F5FA) ,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Take photos for the report:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: Stack(
+        children:[
+          Container(
+              height: ScreenHeight,
+              width: ScreenWidth,
+              color: Color(0xFF0A061F),
             ),
-            SizedBox(height: 10),
-            // Buttons to take photos or select from gallery
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _pickImageFromCamera,
-                  child: Text('Take Photo'),
-                ),
-                Spacer(),
-                ElevatedButton(
-                  onPressed: _pickImageFromGallery,
-                  child: Text('From Gallery'),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            // Display the photos taken by the user
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: _images.length,
-                itemBuilder: (context, index) {
-                  return Image.file(
-                    _images[index],
-                    fit: BoxFit.cover,
-                  );
-                },
+            ClipPath(
+              clipper: WaveClipper(),
+              child: Container(
+                color:Color(0xFFF5F5FA),
+                height: ScreenHeight,
+                width: ScreenWidth,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Go back to the previous page
+           Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10 , horizontal: 25.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Take photos',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'for the Accident:',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              // Buttons to take photos or select from gallery
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF7DA0CA),
+                            foregroundColor: Color(0xFFF5F5FA),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                          ) ,
+                    onPressed: _pickImageFromCamera,
+                    child: Text('Take Photo'),
+                  ),
+                  Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF7DA0CA),
+                            foregroundColor: Color(0xFFF5F5FA),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                          ) ,
+                    onPressed: _pickImageFromGallery,
+                    child: Text('From Gallery'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Display the photos taken by the user
+              Expanded(
+                child: GridView.builder(
+                  scrollDirection: Axis.horizontal,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: _images.length,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(25), // Adjust the radius for the circular effect
+                      child: Image.file(
+                        _images[index],
+                        fit: BoxFit.cover, // Ensure the image is cropped correctly to fit the container
+                      ),
+                    );
                   },
-                  child: Text('Previous'),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      if (_images.isEmpty) {
-                        _showSnackBar("Please upload the photos of the accident");
-                      }
-                      else {
-                        showWaitingDialog();
-
-                        dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-                        print (data);
-                        dynamic userID = await supabase.from('User').select('IdNumber').eq('AuthID', AuthService.authID!).single();
-                        final response = await supabase.from('Accident').insert({
-                          "Injuries" : data['Inj'] == 'Yes' ? true : false,
-                          "NumberOfCars" : data['Plates'].length,
-                          "latitude" : data['Lat'],
-                          "longitude" : data['Long'],
-                          "applicantID" : userID['IdNumber']
-                        }).select('AccidentID').single();
-                        List plates = data['Plates'];
-                        plates.forEach((plate) async{
-                          print (plate);
-                          await supabase.from("Been In").insert({
-                            "PlateNumber" : plate,
-                            "AccidentID" : response['AccidentID'],
-                            "EligForComp" : false,
-                            "Status" : "Pending",
+              ),
+              SizedBox(height: ScreenHeight*0.01,),
+              Row(
+                
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Spacer(),
+                  ElevatedButton(
+                    
+                    style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF0A061F),
+                            foregroundColor: Color(0xFFF5F5FA),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7)
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 40),
+                          ) ,
+                    onPressed: () async {
+                      try {
+                        if (_images.isEmpty) {
+                          _showSnackBar("Please upload the photos of the accident");
+                        }
+                        else {
+                          showWaitingDialog();
+        
+                          dynamic data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+                          print (data);
+                          dynamic userID = await supabase.from('User').select('IdNumber').eq('AuthID', AuthService.authID!).single();
+                          final response = await supabase.from('Accident').insert({
+                            "Injuries" : data['Inj'] == 'Yes' ? true : false,
+                            "NumberOfCars" : data['Plates'].length,
+                            "latitude" : data['Lat'],
+                            "longitude" : data['Long'],
+                            "applicantID" : userID['IdNumber']
+                          }).select('AccidentID').single();
+                          List plates = data['Plates'];
+                          plates.forEach((plate) async{
+                            print (plate);
+                            await supabase.from("Been In").insert({
+                              "PlateNumber" : plate,
+                              "AccidentID" : response['AccidentID'],
+                              "EligForComp" : false,
+                              "Status" : "Pending",
+                            });
                           });
-                        });
-                        await _uploadImagesToStorage(response["AccidentID"]);
-
-                        checkIfOfficerAccepted(response['AccidentID'] , data['Lat'], data['Long']);
-
+                          await _uploadImagesToStorage(response["AccidentID"]);
+        
+                          checkIfOfficerAccepted(response['AccidentID'] , data['Lat'], data['Long']);
+        
+                        }
                       }
-                    }
-                    catch(e){
-                      print('Error submitting the report : $e');
-                    }
-                  },
-                  child: Text('Next'),
-                ),
-              ],
-            ),
-          ],
+                      catch(e){
+                        print('Error submitting the report : $e');
+                      }
+                    },
+                    child: Text('Report'),
+                  ),
+                ],
+              ),
+            SizedBox(height: ScreenHeight*0.17,)
+            ],
+          ),
         ),
+        ]
       ),
     );
   }

@@ -414,16 +414,51 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                       context: context,
                                                       builder: (BuildContext context){
                                                         return AlertDialog(
-                                                          title: Text('Delete Car'),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(25),
+                                                            side: BorderSide(
+                                                              color: Colors.black,
+                                                              width: 2,
+                                                            ),
+                                                          ),
+                                                          title: Text('Delete Car', style: TextStyle(fontWeight: FontWeight.bold),),
                                                           content: Text('Are you sure you want to Delete Car ${index+1}?'),
                                                           actions: [
-                                                            TextButton(
+                                                            ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor: Colors.white,
+                                                                foregroundColor: Color(0xFF0A061F),
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  side: BorderSide(
+                                                                    color: Colors.black,
+                                                                    width: 1
+                                                                  )
+                                                                  
+                                                                ),
+                                                                
+                                                                padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                                              ),
                                                               onPressed: () {
                                                                 Navigator.of(context).pop();
                                                               },
-                                                              child: Text('Cancel'),
+                                                              child: Text('Cancel',style: TextStyle(fontSize: ScreenWidth*0.035),),
                                                             ),
-                                                            TextButton(
+                                                            ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor: Color(0xFF0A061F),
+                                                                foregroundColor: Colors.white,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  side: BorderSide(
+                                                                    color: Colors.black,
+                                                                    width: 1
+                                                                  )
+                                                                  
+                                                                ),
+                                                                
+                                                                padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                                              ),
                                                               onPressed: () async {
                                                                 // Proceed with sign out
                                                                 try {
@@ -437,7 +472,7 @@ Future<void> _deleteCar(int chassisNumber) async {
                                                                   Navigator.of(context).pop(); 
                                                                 }
                                                               },
-                                                              child: Text('OK'),
+                                                              child: Text('Delete',style: TextStyle(fontSize: ScreenWidth*0.035),),
                                                             ),
                                                           ],
                                                         );

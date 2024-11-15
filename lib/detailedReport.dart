@@ -108,9 +108,12 @@ class _mapsWidgetState extends State<mapsWidget> {
   
   @override
   Widget build(BuildContext context) {
+    final ScreenWidth = MediaQuery.sizeOf(context).width;
+    final ScreenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Google Maps Location Search"),
+       backgroundColor: Color(0xFF0A061F),
+       foregroundColor: Colors.white,
       ),
       body: Stack(
         children: [
@@ -137,41 +140,55 @@ class _mapsWidgetState extends State<mapsWidget> {
             myLocationButtonEnabled: true,
           ),
           Positioned(
-            top: 20,
-            left: 15,
-            right: 15,
+            top: 0,
+            left: 0,
+            right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              height: ScreenHeight*0.09,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white
+                color: Color(0xFF0A061F)
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _locationController,
-                      decoration: InputDecoration(
-                        hintText: _currentAddress,
-                        border: InputBorder.none,
-                      ),
-                      style: TextStyle(fontSize: 12),
-                      onTap: () {
-                        setState(() {
-                          _currentAddress = "";
-                        });
-                      },
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    height: ScreenHeight*0.07,
+                    width: ScreenWidth*0.9,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _locationController,
+                            decoration: InputDecoration(
+                              hintText: _currentAddress,
+                              border: InputBorder.none,
+                            ),
+                            style: TextStyle(fontSize: 12),
+                            onTap: () {
+                              setState(() {
+                                _currentAddress = "";
+                              });
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {
+                            if (_locationController.text.isNotEmpty) {
+                              _searchLocation(_locationController.text);
+                            }
+                          },
+                        )
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      if (_locationController.text.isNotEmpty) {
-                        _searchLocation(_locationController.text);
-                      }
-                    },
-                  )
-                ],
+                ),
               ),
             ),
           ),
@@ -185,14 +202,18 @@ class _mapsWidgetState extends State<mapsWidget> {
               ),
             ),
           ),
+          
           Positioned(
             width: MediaQuery.of(context).size.width,
             left: 0,
-            height: MediaQuery.of(context).size.height * 0.1,
+            height: MediaQuery.of(context).size.height * 0.13,
             bottom: 0,
             child: Container(
               padding: EdgeInsets.all(10),
-              color: Colors.grey[300],
+              decoration: BoxDecoration(
+                color: Color(0xFFF5F5FA),
+                border: Border(top: BorderSide(color: Color(0xFF0A061F) , width: ScreenHeight*0.025))
+              ),
               child: Row(
                 children: [
                   GestureDetector(
@@ -201,13 +222,13 @@ class _mapsWidgetState extends State<mapsWidget> {
                     }, 
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.07,
-                      width: MediaQuery.of(context).size.width * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.2,
                       margin: EdgeInsets.only(right: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey[500]
+                        color: Color(0xFF0A061F)
                       ),
-                      child: Center(child: Icon(Icons.navigation)),
+                      child: Center(child: Icon(Icons.navigation_outlined , color: Colors.white,)),
                     ),
                   ),
                   Expanded(
@@ -220,18 +241,19 @@ class _mapsWidgetState extends State<mapsWidget> {
                       },
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.07,
-                        width: MediaQuery.of(context).size.width * 0.65,
+                        width: MediaQuery.of(context).size.width * 0.6,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[500]
+                          color: Color(0xFF0A061F)
                         ),
-                        child: Center(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.15),
-                            iconColor: Colors.black,
-                            leading: Icon(Icons.near_me),
-                            title: Text('Confirm location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width * 0.04)),
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text('Confirm location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width * 0.04 , color: Colors.white)),
+                            Icon(Icons.room_outlined , color: Colors.white,),
+
+                          ],
+                          //contentPadding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.15),
                         ),
                       ),
                     )

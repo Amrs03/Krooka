@@ -9,8 +9,27 @@ class AuthWrapper extends StatelessWidget {
   void dialog (context) {
     showDialog(context: context, builder: (context) {
       return AlertDialog(
-        title: Text('Authentication required'),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+            side: BorderSide(
+              color: Colors.black,
+              width: 2,
+            ),
+          ),
+          
+        title: Text('Authentication required',style: TextStyle(fontWeight: FontWeight.bold),),
         content: Text('You have to be logged in to access the following feature'),
+        actions: [
+          Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red[300],
+                  ),
+                  child: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.close_outlined)),
+          ),
+        ],
       );
     });
   }

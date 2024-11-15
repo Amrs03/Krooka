@@ -256,141 +256,167 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pending Accident Requests'),
-      ),
       body: _isLoading // Check if loading
           ? Center(child: CircularProgressIndicator()) // Show loading indicator
-          : ListView.builder(
-              itemCount: pendingAccidents.length,
-              itemBuilder: (context, index) {
-                final accident = pendingAccidents[index];
-                String timeAgo = _calculateTimeAgo(accident['Date_Time']);
-                String location = accident['sublocality'] ?? "Unknown location";
-                
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  elevation: 2,
-                  child: IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        Container(
-                          width: ScreenWidth*0.71,
-                          padding: EdgeInsets.all(15),
-                          child:Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 6 , right: 5),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.room),
-                                    SizedBox(width: 8), // Add some spacing between the icon and the text
-                                    Expanded(
-                                      child: Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: location.split('_').take(1).join(' - '), 
-                                              style: TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            TextSpan(text: '\n'),
-                                            TextSpan(
-                                              text: location.split('_').length > 2 ? location.split('_').skip(1).join(' - ') : '',
-                                              style: TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
+          : Column(
+            children: [
+              Container(
+                height: ScreenHeight * 0.20,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5F5FA),
+                  
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2), // Shadow color with opacity
+                      spreadRadius: 2,                      // Spread radius
+                      blurRadius: 8,                        // Blur radius
+                      offset: Offset(0, 4),                 // Horizontal & Vertical offset (0 for x, positive for downward y)
+                    ),
+                  ],
+                ),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0 , horizontal: 18),
+                    child: Text("Pending Accident Requests", style: TextStyle(fontWeight: FontWeight.bold , fontSize: 28),),
+                  )),
+              ),
+              SizedBox(height: ScreenHeight*0.03,),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: pendingAccidents.length,
+                    itemBuilder: (context, index) {
+                      final accident = pendingAccidents[index];
+                      String timeAgo = _calculateTimeAgo(accident['Date_Time']);
+                      String location = accident['sublocality'] ?? "Unknown location";
+                      
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 2,
+                        child: IntrinsicHeight(
+                          child: Container(
+                            width: ScreenWidth*0.7,
+                            padding: EdgeInsets.only(left: 15 , right: 15 , top: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(12) , bottomLeft:Radius.circular(12) ),
+                            ),
+                            child:Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 6 , right: 5),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.room),
+                                      SizedBox(width: 10), // Add some spacing between the icon and the text
+                                      Expanded(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: location.split('_').take(1).join(' - '), 
+                                                style: TextStyle(fontWeight: FontWeight.bold , fontSize: ScreenWidth*0.035),
+                                              ),
+                                              TextSpan(text: '\n'),
+                                              TextSpan(
+                                                text: location.split('_').length > 2 ? location.split('_').skip(1).join(' - ') : '',
+                                                style: TextStyle(fontWeight: FontWeight.bold ,fontSize: ScreenWidth*0.035 ,),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        //Text('Injuries: ${accident['Injuries']} | Cars: ${accident['NumberOfCars']}'),
+                                       
+                                        Padding(
+                                          padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 4 , right: 5),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.map), //route  //ramp_left
+                                              SizedBox(width: 10,),
+                                              Text('Distance: ${accident['distance']}', style: TextStyle(fontSize: ScreenWidth*0.035),),
+                                            ],
+                                          ),
+                                        ), // Display distance here
+                                        SizedBox(height: ScreenHeight*0.01,),
+                                        //Text('Estimated Time: ${accident['duration']}'), // Display estimated time here
+                                        Padding(
+                                          padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 4 , right: 5),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.access_time),
+                                              //Icon(Icons.speed), //timer
+                                              SizedBox(width: 10,),
+                                              Text('ET : ${accident['duration_in_traffic']}', style: TextStyle(fontSize: ScreenWidth*0.035)),
+                                            ],
+                                          ),
+                                        ), // Display estimated time in traffic
+                                         Padding(
+                                           padding: const EdgeInsets.only(top:8 , left: 5 , bottom: 4 , right: 5),
+                                           child: Row(
+                                            children: [
+                                              SizedBox(width:5),
+                                              Text('Reported $timeAgo', style: TextStyle(fontSize: ScreenWidth*0.03),),
+                                            ],
+                                          ),
+                                         ),
+                                      ],
                                     ),
+                                    Spacer(),
+                                    GestureDetector(
+                                  onTap: () async {
+                                    try {
+                                      // await supabase
+                                      //   .from('Accident')
+                                      //   .update({'Status': 'in-progress'})
+                                      //   .eq('AccidentID', accident['AccidentID']);
+                                      await supabase
+                                        .from('Accident')
+                                        .update({'OfficerID': '6666664444'})
+                                        .eq('AccidentID', accident['AccidentID']);
+                                      dynamic query = await supabase.from('Accident_Photos').select().eq('accidentId', accident['AccidentID']);
+                                      Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
+                                        'ID' : accident['AccidentID'],
+                                        'lat' : accident['latitude'],
+                                        'long' : accident ['longitude'],
+                                        'NumOfPhotos' : query.length
+                                      });
+                                    }
+                                    catch(e) {
+                                      print ('Error accepting the accident : $e');
+                                    }
+                                  },
+                                  child: Container(
+                                    width: ScreenWidth*0.17,
+                                    height: ScreenHeight*0.1,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(255, 67, 154, 70),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(Icons.check , color: Colors.black,size: ScreenWidth*0.1,)),
+                                ),
                                   ],
                                 ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  //Text('Injuries: ${accident['Injuries']} | Cars: ${accident['NumberOfCars']}'),
-                                 
-                                  Padding(
-                                    padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 4 , right: 5),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.map), //route  //ramp_left
-                                        SizedBox(width: 5,),
-                                        Text('Distance: ${accident['distance']}'),
-                                      ],
-                                    ),
-                                  ), // Display distance here
-                                  //Text('Estimated Time: ${accident['duration']}'), // Display estimated time here
-                                  Padding(
-                                    padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 4 , right: 5),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time),
-                                        //Icon(Icons.speed), //timer
-                                        SizedBox(width: 5,),
-                                        Text('ET : ${accident['duration_in_traffic']}'),
-                                      ],
-                                    ),
-                                  ), // Display estimated time in traffic
-                                   Padding(
-                                     padding: const EdgeInsets.only(top:3 , left: 5 , bottom: 4 , right: 5),
-                                     child: Row(
-                                      children: [
-                                        SizedBox(width:5),
-                                        Text('Reported $timeAgo', style: TextStyle(fontSize: ScreenWidth*0.035),),
-                                      ],
-                                    ),
-                                   ),
-                                ],
-                              ),
-                              
-                            ],
+                                
+                              ],
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            try {
-                              // await supabase
-                              //   .from('Accident')
-                              //   .update({'Status': 'in-progress'})
-                              //   .eq('AccidentID', accident['AccidentID']);
-                              await supabase
-                                .from('Accident')
-                                .update({'OfficerID': '6666664444'})
-                                .eq('AccidentID', accident['AccidentID']);
-                              dynamic query = await supabase.from('Accident_Photos').select().eq('accidentId', accident['AccidentID']);
-                              Navigator.pushReplacementNamed(context, '/AcceptAccident', arguments: <String, dynamic>{
-                                'ID' : accident['AccidentID'],
-                                'lat' : accident['latitude'],
-                                'long' : accident ['longitude'],
-                                'NumOfPhotos' : query.length
-                              });
-                            }
-                            catch(e) {
-                              print ('Error accepting the accident : $e');
-                            }
-                          },
-                          child: Container(
-                            width: ScreenWidth*.2,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 42, 107, 44),
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(12) , bottomRight:Radius.circular(12) ),
-                            ),
-                            child: Column(
-                              children: [
-                                Spacer(),
-                                Icon(Icons.check_circle , color: Colors.white,size: 30,),
-                                Spacer(),
-                              ],
-                            ) ,
-                          ),
-                        )
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+              ),
+            ],
+          ),
     );
   }
 }
