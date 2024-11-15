@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krooka/HomePage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:krooka/signInPage.dart';
 
@@ -54,6 +55,31 @@ class AuthWrapper extends StatelessWidget {
             }
           }
           return SignInPage();
+        }
+      ),  
+    );
+  }
+}
+
+class InProgressWrapper extends StatelessWidget {
+  final Widget child;
+  final dynamic accidentID;
+  const InProgressWrapper({required this.child, required this.accidentID});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder(
+        stream: Supabase.instance.client.from('Accident').stream(primaryKey: ['AccidentID']).eq('AccidentID', accidentID), 
+        builder: (context, snapshot) {
+          print (snapshot.data!.single['Status']);
+          if(snapshot.data!.single['Status'] == 'complete'){
+            Navigator.of(context).popUntil(ModalRoute.withName('/Homepage'));
+            return MyHomePage();
+          }
+          else {
+            return child;
+          }
         }
       ),  
     );

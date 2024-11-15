@@ -102,7 +102,7 @@ class _acceptAccidentState extends State<acceptAccident> {
       await supabase
         .from('Officer')
         .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
-        .eq('OfficerID', '6666664444');
+        .eq('OfficerID', widget.data['officerID']);
       print ('Location has been updated \n :)');
     }
     catch(e) {
@@ -196,7 +196,7 @@ class _acceptAccidentState extends State<acceptAccident> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _timer?.cancel(); // Cancel the timer when disposing the widget
     super.dispose();
   }
 
@@ -204,250 +204,253 @@ class _acceptAccidentState extends State<acceptAccident> {
   Widget build(BuildContext context) {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
-    return Scaffold(
-      backgroundColor: Color(0xFFF5F5FA),
-      body: Column(
-        children: [
-          SizedBox(height: ScreenHeight*0.05),
-          GestureDetector(
-            onTap: (){
-              OpenGoogleMaps(widget.data['lat'], widget.data['long']);
-            },
-            child: Container(
-              width: ScreenWidth*0.8,
-              height: ScreenHeight *0.075,
-              decoration: BoxDecoration(
-                
-                borderRadius: BorderRadius.circular(15),
-                color: Color(0xFF7DA0CA)
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    
-                    Text("Go to location", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22 ,color: Colors.white)),
-                    SizedBox(width: 10),
-
-                   Icon(Icons.room_outlined, size: 28 , color: Colors.white,),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            //height: ScreenHeight * 0.3,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.05),
-              child: GridView.builder(
-                
-                shrinkWrap: true, // Allows the GridView to size itself based on its content
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10
-                ),
-                itemCount: widget.data['NumOfPhotos'],
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap:() {
-                      if (done){
-                        showDialog(
-                          context: context, 
-                          builder:(context) => PhotoDialog(photoBytes:  imageBytes[index])
-                        );
-                      }
-                    },
-                    child: done ? ClipRRect(
-                      borderRadius: BorderRadius.circular(15), // Adjust the radius for the circular effect
-                      child: Image.memory(imageBytes[index], fit: BoxFit.cover)): Center(child: CircularProgressIndicator())
-                  );
-                }
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Expanded(
-            child: FutureBuilder(
-              future: Future.wait([
-                getPlates(widget.data['ID']),
-              ]),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    width: ScreenWidth * 0.8,
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Container(
-                    width: ScreenWidth * 0.8,
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Center(
-                      child: Text("Error: ${snapshot.error}"),
-                    ),
-                  );
-                } else {
-                  // Assuming _images and _plateNumbers are defined and populated in getPhotos and getPlates
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ScreenWidth * 0.1),
-                    child: Column(
-                      children:[
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _plates.length, // Assuming _plateNumbers is defined
-                            itemBuilder: (context, index) {
-                              return Container(
-                                padding: EdgeInsets.all(8),
-                                margin: EdgeInsets.symmetric(horizontal: 5 , vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(width: 1 ,color: Colors.black)
-                                ),
-                                child: Text(
-                                  _plates[index],
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        // Display Photos
-                      ],
-                    ),
-                  );
-                }
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Color(0xFFF5F5FA),
+        body: Column(
+          children: [
+            SizedBox(height: ScreenHeight*0.05),
+            GestureDetector(
+              onTap: (){
+                OpenGoogleMaps(widget.data['lat'], widget.data['long']);
               },
-            ),
-          ),
-          Container(
-            width: ScreenWidth*1,
-            height: ScreenHeight*0.3,
-            padding: EdgeInsets.only(top: 10 , bottom: 2),
-            margin: EdgeInsets.only(right: ScreenWidth*0.003,left: ScreenWidth*0.003 ,top: 2),
-            decoration: BoxDecoration(
-              color: Color(0xFF0A061F),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-              
-            ),
-             child: Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Container(
+                width: ScreenWidth*0.8,
+                height: ScreenHeight *0.075,
+                decoration: BoxDecoration(
+                  
+                  borderRadius: BorderRadius.circular(15),
+                  color: Color(0xFF7DA0CA)
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        height: ScreenHeight *0.065,
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
-                        decoration: BoxDecoration(
-                        
-                          borderRadius: BorderRadius.circular(12),
-                          color: Color(0xFF0A061F),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.8), // White shadow with opacity
-                              spreadRadius: 1, // How much the shadow spreads out
-                              blurRadius: 2, // Softness of the shadow
-                              offset: Offset(1, 4), // Horizontal and vertical position of the shadow
-                            ),
-                          ],
-                        ),
-                        
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.person_outline_outlined, color: Colors.white,),
-                              SizedBox(width:3),
-                              Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) ,),
-                            ],
-                          )
-                        ),
+                      
+                      Text("Go to location", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22 ,color: Colors.white)),
+                      SizedBox(width: 10),
+      
+                     Icon(Icons.room_outlined, size: 28 , color: Colors.white,),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              //height: ScreenHeight * 0.3,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.05),
+                child: GridView.builder(
+                  
+                  shrinkWrap: true, // Allows the GridView to size itself based on its content
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10
+                  ),
+                  itemCount: widget.data['NumOfPhotos'],
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap:() {
+                        if (done){
+                          showDialog(
+                            context: context, 
+                            builder:(context) => PhotoDialog(photoBytes:  imageBytes[index])
+                          );
+                        }
+                      },
+                      child: done ? ClipRRect(
+                        borderRadius: BorderRadius.circular(15), // Adjust the radius for the circular effect
+                        child: Image.memory(imageBytes[index], fit: BoxFit.cover)): Center(child: CircularProgressIndicator())
+                    );
+                  }
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Expanded(
+              child: FutureBuilder(
+                future: Future.wait([
+                  getPlates(widget.data['ID']),
+                ]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      width: ScreenWidth * 0.8,
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          _makePhoneCall(applicantInfo['PhoneNum']);
-                          print("test");
-                        },
-                        child: Container(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Container(
+                      width: ScreenWidth * 0.8,
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Center(
+                        child: Text("Error: ${snapshot.error}"),
+                      ),
+                    );
+                  } else {
+                    // Assuming _images and _plateNumbers are defined and populated in getPhotos and getPlates
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: ScreenWidth * 0.1),
+                      child: Column(
+                        children:[
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _plates.length, // Assuming _plateNumbers is defined
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.symmetric(horizontal: 5 , vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(width: 1 ,color: Colors.black)
+                                  ),
+                                  child: Text(
+                                    _plates[index],
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          // Display Photos
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            Container(
+              width: ScreenWidth*1,
+              height: ScreenHeight*0.3,
+              padding: EdgeInsets.only(top: 10 , bottom: 2),
+              margin: EdgeInsets.only(right: ScreenWidth*0.003,left: ScreenWidth*0.003 ,top: 2),
+              decoration: BoxDecoration(
+                color: Color(0xFF0A061F),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                
+              ),
+               child: Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           height: ScreenHeight *0.065,
                           margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
                           decoration: BoxDecoration(
-                            
+                          
                             borderRadius: BorderRadius.circular(12),
                             color: Color(0xFF0A061F),
                             boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.8), // White shadow with opacity
-                              spreadRadius: 1, // How much the shadow spreads out
-                              blurRadius: 2, // Softness of the shadow
-                              offset: Offset(1, 4), // Horizontal and vertical position of the shadow
-                            ),
-                          ],
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.8), // White shadow with opacity
+                                spreadRadius: 1, // How much the shadow spreads out
+                                blurRadius: 2, // Softness of the shadow
+                                offset: Offset(1, 4), // Horizontal and vertical position of the shadow
+                              ),
+                            ],
                           ),
+                          
                           child: Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.phone , color: Colors.white,),
-                                SizedBox(width: 5,),
-                                Text("${applicantInfo['PhoneNum']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) )
+                                Icon(Icons.person_outline_outlined, color: Colors.white,),
+                                SizedBox(width:3),
+                                Text("${applicantInfo['FirstName']} ${applicantInfo['LastName']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) ,),
                               ],
-                            ),
+                            )
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: ScreenHeight*0.02,),
-                  GestureDetector(
-                    onTap: (){
-                      // OpenGoogleMaps(widget.data['lat'], widget.data['long']);
-                       
-                    },
-                    child: Container(
-                      width: ScreenWidth*0.9,
-                      height: ScreenHeight *0.07,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 2
+                        GestureDetector(
+                          onTap: () {
+                            _makePhoneCall(applicantInfo['PhoneNum']);
+                            print("test");
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 4),
+                            height: ScreenHeight *0.065,
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                            decoration: BoxDecoration(
+                              
+                              borderRadius: BorderRadius.circular(12),
+                              color: Color(0xFF0A061F),
+                              boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.8), // White shadow with opacity
+                                spreadRadius: 1, // How much the shadow spreads out
+                                blurRadius: 2, // Softness of the shadow
+                                offset: Offset(1, 4), // Horizontal and vertical position of the shadow
+                              ),
+                            ],
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.phone , color: Colors.white,),
+                                  SizedBox(width: 5,),
+                                  Text("${applicantInfo['PhoneNum']}",style: TextStyle(color: Colors.white,fontSize: ScreenWidth*0.035) )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: ScreenHeight*0.02,),
+                    GestureDetector(
+                      onTap: (){
+                        // OpenGoogleMaps(widget.data['lat'], widget.data['long']);
+                         
+                      },
+                      child: Container(
+                        width: ScreenWidth*0.9,
+                        height: ScreenHeight *0.07,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                            Text("Finished", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                          ],
+                        child: GestureDetector(
+                          onTap: () async {
+                            await supabase.from('Accident').update({'Status' : 'complete'}).eq('AccidentID', widget.data['ID']);
+                            Navigator.pop(context);
+                          },
+                          child: Center(
+                            child: Text("Finished", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                 ),
                ),
              ),
-           ),
-        ],
+          ],
+        ),
       ),
     );
   }
