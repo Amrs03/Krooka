@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'signInPage.dart';
+
 
 class OfficerPage extends StatefulWidget {
   @override
@@ -267,7 +269,7 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
             : Column(
               children: [
                 Container(
-                  height: ScreenHeight * 0.20,
+                  height: ScreenHeight * 0.25,
                   decoration: BoxDecoration(
                     color: Color(0xFFF5F5FA),
                     boxShadow: [
@@ -290,7 +292,68 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                             icon: Icon(Icons.refresh)
                           ),
                           IconButton(
-                            onPressed: () async {await AuthService().signOut();},
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      side: BorderSide(
+                                        color: Colors.black,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    title: Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold),),
+                                    content: Text('Are you sure you want to sign out '),
+                                    actions: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          foregroundColor: Color(0xFF0A061F),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                            side: BorderSide(
+                                              color: Colors.black,
+                                              width: 1
+                                            )
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Cancel' ,style: TextStyle(fontSize: ScreenWidth*0.035),),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red[300],
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                            side: BorderSide(
+                                              color: Colors.black,
+                                              width: 1
+                                            )
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: ScreenWidth*0.06),
+                                        ),
+                                        onPressed: () async {
+                                          await AuthService().signOut();
+                                          await Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => SignInPage()),
+                                            (Route<dynamic> route) => false
+                                          );
+                                        },
+                                        child: Text('Sign Out',style: TextStyle(fontSize: ScreenWidth*0.035),),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              },
                             icon: Icon(Icons.logout)
                           )
                         ],
@@ -399,10 +462,10 @@ Future<Map<String, String>> _getDistanceAndTime(double officerLat, double office
                                       GestureDetector(
                                     onTap: () async {
                                       try {
-                                        // await supabase
-                                        //   .from('Accident')
-                                        //   .update({'Status': 'in-progress'})
-                                        //   .eq('AccidentID', accident['AccidentID']);
+                                        await supabase
+                                          .from('Accident')
+                                          .update({'Status': 'in-progress'})
+                                          .eq('AccidentID', accident['AccidentID']);
                                         dynamic result = await supabase.from('Officer').select('OfficerID').eq('AuthID', AuthService.authID!).single();
                                         await supabase
                                           .from('Accident')

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krooka/AccidentInProgress.dart';
 import 'package:krooka/OfficerPage.dart';
+import 'package:krooka/SplashPage.dart';
 import 'package:krooka/detailedReport.dart';
 import 'package:krooka/detailedReport4.dart';
 import 'package:krooka/detailedReport5.dart';
@@ -24,8 +25,9 @@ class homePage extends StatelessWidget {
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/splash',
         routes: {
+          '/splash' : (context) =>SplashPage(),
           '/': (context) =>SignInPage(),
           '/Homepage' : (context) => MyHomePage(),
           '/DR2' : (context) => detailedReport2(),
