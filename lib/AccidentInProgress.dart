@@ -159,98 +159,101 @@ class _InProgressState extends State<InProgress> {
   Widget build(BuildContext context) {
     final ScreenWidth = MediaQuery.sizeOf(context).width;
     final ScreenHeight = MediaQuery.sizeOf(context).height;
-    return Scaffold(
-      body: FutureBuilder(
-        future: _accLocFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done){
-            return Stack(
-              children:[ 
-                GoogleMap(
-                  zoomControlsEnabled: false,
-                  mapType: MapType.normal,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  initialCameraPosition: CameraPosition(
-                    target: officerLocation,
-                    zoom: 16
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: FutureBuilder(
+          future: _accLocFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done){
+              return Stack(
+                children:[ 
+                  GoogleMap(
+                    zoomControlsEnabled: false,
+                    mapType: MapType.normal,
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                    initialCameraPosition: CameraPosition(
+                      target: officerLocation,
+                      zoom: 16
+                    ),
+                    markers: {
+                      _officerMarker!,
+                      _accidentMarker!
+                    },
+                    polylines: Set<Polyline>.of(polylines.values),
                   ),
-                  markers: {
-                    _officerMarker!,
-                    _accidentMarker!
-                  },
-                  polylines: Set<Polyline>.of(polylines.values),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                   height: ScreenHeight * 0.2,
-                   width: ScreenWidth*1,
-                   padding: EdgeInsets.only(top: 10 , bottom: 2),
-                  //  margin: EdgeInsets.only(right: ScreenWidth*0.01,left: ScreenWidth*0.01),
-                   decoration: BoxDecoration(
-                     color: Color(0xFF0A061F),
-                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(30)),
-                   ),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: ScreenHeight *0.065,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 2
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                     height: ScreenHeight * 0.2,
+                     width: ScreenWidth*1,
+                     padding: EdgeInsets.only(top: 10 , bottom: 2),
+                    //  margin: EdgeInsets.only(right: ScreenWidth*0.01,left: ScreenWidth*0.01),
+                     decoration: BoxDecoration(
+                       color: Color(0xFF0A061F),
+                       borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(30)),
+                     ),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: ScreenHeight *0.065,
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.grey[200]
                             ),
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.grey[200]
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.person),
-                                SizedBox(width:3),
-                                Text(officerName),
-                              ],
-                            )
-                          ),
-                         ),
-                         Container(
-                          height: ScreenHeight *0.065,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 2
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.person),
+                                  SizedBox(width:3),
+                                  Text(officerName),
+                                ],
+                              )
                             ),
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.grey[200]
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.timelapse),
-                                SizedBox(width: 5,),
-                                Text("Est Time : $estimatedTime")
-                              ],
+                           ),
+                           Container(
+                            height: ScreenHeight *0.065,
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.grey[200]
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.timelapse),
+                                  SizedBox(width: 5,),
+                                  Text("Est Time : $estimatedTime")
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-          else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),      
+                ],
+              );
+            }
+            else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),      
+      ),
     );    
   }   
 }   

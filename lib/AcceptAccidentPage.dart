@@ -54,6 +54,7 @@ class _acceptAccidentState extends State<acceptAccident> {
   List<String> _plates =[];
   Map<String,dynamic> applicantInfo = {};
   Timer? _timer;
+  Stream<Position>? positionStream;
 
   @override
   void initState() {
@@ -61,7 +62,8 @@ class _acceptAccidentState extends State<acceptAccident> {
     _locationPermission();
     getPhotos(widget.data['ID']);
     getApplicantInfo(widget.data['ID']);
-    startTimer();
+    _listenToLocationChanges();
+    // startTimer();
   }
 
   Future<void> _locationPermission() async {
@@ -75,12 +77,12 @@ class _acceptAccidentState extends State<acceptAccident> {
       permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('Please allow the app to use the location of your device');
+        if (permission != LocationPermission.always) {
+          throw Exception('Please grant the app \'Always\' location permissions from the settings -> apps -> Krooka');
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        throw Exception('Please allow the app to use the location of your device, by changing the permission rules in the settings -> apps');
+        throw Exception('Please grant the app \'Always\' location permissions from the settings -> apps -> Krooka');
       }
     }
     catch(e) {
@@ -89,25 +91,54 @@ class _acceptAccidentState extends State<acceptAccident> {
     }
   }
 
-  void startTimer () async {
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      await _saveCurrentLocation();
-    });
+  Future<bool> showPermissionRationaleDialog() async {
+    showDialog(
+      context: context, 
+      builder:(context) {
+        return AlertDialog(
+          title: Text('Location permissions'),
+          content: Text('Please enable the location ALWAYS from the settings -> apps -> Krooka'),
+        );
+      },
+    );
+    return Future.value(true); 
   }
 
-  Future<void> _saveCurrentLocation() async {
+  // void startTimer () async {
+  //   _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+  //     await _saveCurrentLocation();
+  //   });
+  // }
+
+  // Future<void> _saveCurrentLocation() async {
+  //   try {
+  //     print ('Updating the location ...');
+  //     Position position = await Geolocator.getCurrentPosition();
+  //     await supabase
+  //       .from('Officer')
+  //       .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
+  //       .eq('OfficerID', widget.data['officerID']);
+  //     print ('Location has been updated \n :)');
+  //   }
+  //   catch(e) {
+  //     print('Can\'t get the current location : $e');
+  //     Navigator.pop(context);
+  //   }
+  // }
+
+  void _listenToLocationChanges () async {
     try {
-      print ('Updating the location ...');
-      Position position = await Geolocator.getCurrentPosition();
-      await supabase
-        .from('Officer')
-        .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
-        .eq('OfficerID', widget.data['officerID']);
-      print ('Location has been updated \n :)');
+      positionStream = Geolocator.getPositionStream(locationSettings: LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 10));
+      positionStream!.listen((Position position){
+        // await supabase
+        //   .from('Officer')
+        //   .update({'currentLat': position.latitude, 'currentLong' : position.longitude})
+        //   .eq('OfficerID', widget.data['officerID']);
+        print ('location has been updated');
+      });
     }
     catch(e) {
-      print('Can\'t get the current location : $e');
-      Navigator.pop(context);
+      
     }
   }
 

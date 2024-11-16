@@ -189,7 +189,7 @@ class _SignInPageState extends State<SignInPage> {
                     ],
                   ),
                 ),
-                Container(color: Color(0xFF0A061F), height: 100)
+                Container(color: Color(0xFF0A061F), height: 100) 
               ],
             ),
           ),

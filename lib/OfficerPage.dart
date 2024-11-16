@@ -215,9 +215,9 @@ Future<Position> _getOfficerLocation() async {
     return Future.error(
         'Location permissions are permanently denied, we cannot request permissions.');
   }
-
-  // When permission is granted, get the position.
-  return await Geolocator.getCurrentPosition();
+  Position offCurrPos = await Geolocator.getCurrentPosition();
+  await supabase.from('Officer').update({'currentLat' : offCurrPos.latitude, 'currentLong' : offCurrPos.longitude}).eq('AuthID', AuthService.authID!);
+  return offCurrPos;
 }
 
 Future<Map<String, String>> _getDistanceAndTime(double officerLat, double officerLng, double accidentLat, double accidentLng) async {
